@@ -68,6 +68,7 @@ def normal_mode() :
                 if guessNo>highscore : 
                     print(f"Highscore guess number : {highscore}")
                 else : 
+                    sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #plays new highscore music
                     with open(easy_highscore_path, "w") as f1 : 
                         f1.write(str(guessNo))
                         tts("\nNew highscore unlocked!")
@@ -86,6 +87,7 @@ def normal_mode() :
                 if guessNo>highscore : 
                     print(f"Highscore guess number : {highscore}")
                 else : 
+                    sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3")
                     with open(medium_highscore_path, "w") as f1 : 
                         f1.write(str(guessNo))
                         tts("\nNew highscore unlocked!")
@@ -104,6 +106,7 @@ def normal_mode() :
                 if guessNo>highscore : 
                     print(f"Highscore guess number : {highscore}")
                 else : 
+                    sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3")
                     with open(hard_highscore_path, "w") as f1 :
                         f1.write(str(guessNo))
                         tts("\nNew highscore unlocked!")
