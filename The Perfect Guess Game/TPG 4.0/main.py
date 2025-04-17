@@ -20,6 +20,19 @@ def only_tts(text) :
    engine.say(text)
    engine.runAndWait() 
 
+import os
+# Set the environment variable BEFORE importing pygame
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+import pygame #for bkg music
+from audio import audio #imports audio.py as a module
+import threading
+
+def music_thread(func, file, duration=-1) :  #duration -1 default i.e. on infinite loop
+   thread = threading.Thread(target=func, args=(file, duration), daemon=True)
+   thread.start()
+
+music_thread(audio.menu_music, "menu_music.wav") #Runs menu music on an infinite loop 
+
 
 from data.prompts import common_prompts
 
@@ -61,12 +74,17 @@ while True :
  #set a current_mode in else block, so it'd crash if the internal loop runs
 
  while True : #Internal loop
-
+    
+    pygame.mixer.music.stop() #Stops menu music before entering any game mode (so we can start the game mode music in the module)
     play_game_mode(current_mode)
     only_tts(common_prompts.rematch_prompts())
+
+
+    music_thread(audio.menu_music, "menu_music.wav") #Starts menu music if player is back in menu
     
     loop_question = input(("\nWanna play one more game?(yes/no) : "))
     if loop_question.lower().strip() not in ["yes", "y"] : 
+        pygame.mixer.music.stop()
         tts(common_prompts.no_loop_roasts())
         print("\nHope you enjoyed! Re-run the programme to play again")
         exit()

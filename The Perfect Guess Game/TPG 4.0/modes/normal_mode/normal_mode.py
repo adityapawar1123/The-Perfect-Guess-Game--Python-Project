@@ -1,8 +1,14 @@
 def normal_mode() : 
     import random 
+    import threading
+    import os 
     
     from modes.normal_mode.prompts import roasts, otherprompts
     from data.prompts import common_prompts
+
+    # Set the environment variable BEFORE importing pygame
+    os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+    import pygame
     
     import pyttsx3
     engine = pyttsx3.init()
@@ -26,10 +32,20 @@ def normal_mode() :
         engine.say(text)
         engine.runAndWait() 
 
-    import os 
     path = os.path.dirname(os.path.abspath(__file__))
 
+    from audio import audio 
+    def music_thread(func, file, duration=-1) : #by default duration stays on -1 i.e. runs song on infinite loop
+        thread = threading.Thread(target= func, args=(file, duration), daemon=True)
+        thread.start()
 
+    def sound_effect_thread(func, file) : #by default duration stays on -1 i.e. runs song on infinite loop
+        thread = threading.Thread(target= func, args=(file,), daemon=True)
+        thread.start()
+    #Seperating these functn(s) to prevent audio overlapping
+
+    music_thread(audio.normal_mode_music, "normal_mode.wav")
+    
     tts(otherprompts.normal_mode_explain())
     
     while True : 
@@ -37,7 +53,6 @@ def normal_mode() :
 
         print("Easy : Guess between 1 and 100\nMedium : Guess between 1 and 500\nHard : Guess between 1 and 1000")
         difficulty = input("Enter(e/m/h) : ")
-
         guessNo= 0
 
         def easy_highscore() : 
@@ -124,6 +139,9 @@ def normal_mode() :
                         n = int(n1)
                         if  easyNo==n : 
                             guessNo += 1
+                            pygame.mixer.music.stop()
+                            sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3") #plays the win sound effect 
+                            #we're using .Sound for sound effects so no need to use music.stop()
                             game_win_prompts()
                             easy_highscore()
                             break #breaks the inner loop 
@@ -139,8 +157,10 @@ def normal_mode() :
                             guessNo+=1
 
                     else : 
+                        pygame.mixer.music.pause()
                         only_tts(roasts.invalid_input_roasts())
                         print("\nEnter an integer DUMBASS")
+                        pygame.mixer.music.unpause()
                 break #Breaks the main loop
                     
             
@@ -156,6 +176,8 @@ def normal_mode() :
                         n = int(n1)
                         if  mediumNo==n : 
                             guessNo += 1
+                            pygame.mixer.music.stop()
+                            sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3") #plays the win sound effect 
                             game_win_prompts()
                             medium_highscore()
                             break #breaks the inner loop
@@ -171,8 +193,10 @@ def normal_mode() :
                             guessNo+=1
 
                     else : 
+                        pygame.mixer.music.pause()
                         only_tts(roasts.invalid_input_roasts())
                         print("\nEnter an integer DUMBASS")
+                        pygame.mixer.music.unpause()
                 break #Breaks main loop
                     
 
@@ -187,6 +211,8 @@ def normal_mode() :
                         n = int(n1)
                         if  hardNo==n : 
                             guessNo += 1
+                            pygame.mixer.music.stop()
+                            sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3") #plays the win sound effect
                             game_win_prompts()
                             hard_highscore()
                             break #breaks inner loop
@@ -202,9 +228,13 @@ def normal_mode() :
                             guessNo+=1
 
                     else : 
+                        pygame.mixer.pause()
                         only_tts(roasts.invalid_input_roasts())
                         print("\nEnter an integer DUMBASS")
+                        pygame.mixer.unpause()
                 break #breaks main loop
                     
         else : 
+            pygame.mixer.music.pause()
             tts("\nInvalid difficulty level! Choose again")
+            pygame.mixer.music.unpause() #resumes the music

@@ -38,12 +38,25 @@ def timebound_mode() :
         with tts_lock : 
             engine.say(text)
             engine.runAndWait()
-        
-    
-    
 #If you ever get weird behavior like "works once but never again", look for variable/function 
 #name collisions. Python won’t throw an error, but the results get janky real fast.
 
+    import os
+    os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" #prevents pygame from printing that intro msg
+    import pygame
+    pygame.mixer.init()
+
+    from audio import audio 
+    def music_thread(func, file, duration=-1) : #by default duration stays on -1 i.e. runs song on infinite loop
+        thread = threading.Thread(target= func, args=(file, duration), daemon=True)
+        thread.start()
+
+    def sound_effect_thread(func, file) : #by default duration stays on -1 i.e. runs song on infinite loop
+        thread = threading.Thread(target= func, args=(file,), daemon=True)
+        thread.start()
+    #Seperating these functn(s) to prevent audio overlapping
+
+    music_thread(audio.timebound_mode_music, "timebound_mode.wav") #Starts music
 
     tts(otherprompts.timebound_mode_explain())
     
@@ -58,16 +71,28 @@ def timebound_mode() :
             difficulty = input("Enter(e/m/h) : ")
 
             if difficulty not in ["e", "ez", "easy", "m", "mid", "medium", "normal", "diff", "dif", "h", "hard", "tough"] : 
+                pygame.mixer.music.pause()
                 tts("\nInvalid difficulty level! Please try again.")
+                pygame.mixer.music.unpause()
                 continue
 
             try : 
                 tts("\nChoose timer")
                 print("1. 20secs timer\n2. 30secs timer\n3. 40secs timer")
                 timer = int(input("Enter timer(20/30/40) : "))
+
+                if timer not in [20, 30, 40] : 
+                    pygame.mixer.music.pause()
+                    tts("\nPlease select the timer only between given options. Try again!")
+                    pygame.mixer.music.unpause()
+                    continue #loops back to choose difficulty
+
             except ValueError : #loops back if user doesn't enter an int
+                pygame.mixer.music.pause()
                 tts("\nInvalid input! Please enter a number only, try again")
+                pygame.mixer.music.unpause()
                 continue
+
 
             def countdown(shared_state) :
                 while shared_state['remaining_time'] > 0 : 
@@ -76,7 +101,9 @@ def timebound_mode() :
                         shared_state['remaining_time'] -= 1
                     
                     if shared_state['remaining_time'] == 10 : 
+                        pygame.mixer.music.stop()
                         print("\n🕒 10 seconds remaining!!")
+                        music_thread(audio.timebound_mode_music, "timebound_10_sec_left.wav")
                         continue
             
             def number_guesser():
@@ -93,10 +120,6 @@ def timebound_mode() :
                     guessNo = random.randint(1, 1000)
                     difficulty_explain = "\nYou have to guess a number between 1 and 1000."
 
-
-                else : 
-                    tts("\nPlease select the timer only between given options. Try again!")
-                    return
 
                 tts(difficulty_explain)
 
@@ -118,6 +141,8 @@ def timebound_mode() :
                         else : 
             
                             if  guessNo==n : 
+                                    pygame.mixer.music.stop() #Stops the bkg music
+                                    sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3")
                                     print("\n✨YOU WON!✨")
                                     only_tts("You won!")
                                     only_tts(otherprompts.win_prompts())
@@ -136,13 +161,17 @@ def timebound_mode() :
                                     continue #continues inner loop
                                     
                      except ValueError :  
+                            pygame.mixer.music.pause()
                             tts(roasts.invalid_input_roasts())
                             print("\nEnter an integer DUMBASS")
+                            pygame.mixer.music.unpause()
                             continue #loops back if user doesn't enter an int
                     
                     
                     except TimeoutError : 
-                        print("\n💥 Countdown finished!")
+                        pygame.mixer.music.stop()
+                        sound_effect_thread(audio.sound_effects, "loss_sound_effect.mp3")
+                        print("\n💥 Countdown finished! YOU LOST 💥")
                         only_tts(otherprompts.lose_prompts())
                         return "time over"
 
