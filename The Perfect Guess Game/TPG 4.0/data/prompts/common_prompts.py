@@ -2,16 +2,16 @@ import random
 
 def intro_prompts() : 
     intro_prompts = [
-    "Welcome to The Perfect Guess! Ready to test your luck and brainpower?",
-    "Yo, welcome! Think you can crack the code? Let's see if you got the skills!",
-    "Guess the number… if you dare. Let's see if you're a true mastermind!",
-    "Welcome challenger! Can you outsmart my number? Let's find out!",
-    "Ayy, glad you showed up! Let's see how fast you can crack this mystery number.",
-    "The game is simple. The challenge? Not so much. Think you can handle it?",
-    "Alright let's do this, I've got a number in mind—can you guess it?",
-    "Yo genius! Time to prove yourself. Guess the number before I roast you.",
-    "New challenger detected! Only legends can guess my number. Are you one?",
-    "Ready set GUESS! The clock is ticking, let's see what you got."]
+    "\nWelcome to The Perfect Guess! Ready to test your luck and brainpower?",
+    "\nYo, welcome! Think you can crack the code? Let's see if you got the skills!",
+    "\nGuess the number… if you dare. Let's see if you're a true mastermind!",
+    "\nWelcome challenger! Can you outsmart my number? Let's find out!",
+    "\nAyy, glad you showed up! Let's see how fast you can crack this mystery number.",
+    "\nThe game is simple. The challenge? Not so much. Think you can handle it?",
+    "\nAlright let's do this, I've got a number in mind—can you guess it?",
+    "\nYo genius! Time to prove yourself. Guess the number before I roast you.",
+    "\nNew challenger detected! Only legends can guess my number. Are you one?",
+    "\nReady set GUESS! The clock is ticking, let's see what you got."]
     return random.choice(intro_prompts)
 
 def no_loop_roasts() :  
