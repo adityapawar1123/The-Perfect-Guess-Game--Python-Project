@@ -35,14 +35,15 @@ def play_game_mode(mode) :
 #U can also import modules outside of ur project folder using importlib.util (be cautious w this tho)
 #importlib is a built in python module
    elif mode == "timebound" : 
-      pass
+      from modes.timebound_mode.timebound_mode import timebound_mode
+      timebound_mode()
       
 
 
 while True :
  
  tts("\nChoose a game mode!")
- print("Available game modes : \n1.Normal mode\n2.Timebound mode")
+ print("Available game modes : \n1.Normal mode 🎯\n2.Timebound mode 🕒")
 
  game_mode = input("Enter game mode(n/t) : ").lower().strip()
 
@@ -51,8 +52,6 @@ while True :
 
  elif game_mode in ["timebound", "time", "t", "two", "2", "2."] : 
     current_mode = "timebound"
-    tts("We are currently working on that game mode, come again soon to check it out!")
-    continue
 
 
  else : 
@@ -78,13 +77,3 @@ while True :
     if game_mode_loop_question.lower().strip() not in ["y", "yes"] : 
          break # break inner loop, go back to "choose a game mode"
     
-
-     
-
-
-   
-       
-    
-
-
-
