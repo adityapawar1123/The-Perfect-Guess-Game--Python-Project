@@ -11,23 +11,30 @@ Using pygame.mixer.music for both music and sound effects, but mixer.music is me
 '''
 pygame.mixer.init()
 
-def menu_music(file, duration=-1) : #default duration is -1 i.e. infinite loop
+def menu_music(file, duration=-1, fade_in = 1000) : #default duration is -1 i.e. infinite loop
     path = os.path.join("audio", "music", "menu", file)
     pygame.mixer.music.load(path)
     pygame.mixer.music.set_volume(0.7) #Max volume value is 1
-    pygame.mixer.music.play(duration) #runs infinitely i.e. on loop
+    pygame.mixer.music.play(duration, fade_ms=fade_in) #runs infinitely i.e. on loop
+#fade_ms fades in the music for seamless transition, I've set the default fade to 1000ms for this functn i.e. 1sec
 
-def normal_mode_music(file, duration=-1) : 
+def normal_mode_music(file, duration=-1, fade_in=2250) : 
     path = os.path.join("audio", "music", "normal_mode", file)
     pygame.mixer.music.load(path)
     pygame.mixer.music.set_volume(0.85)
-    pygame.mixer.music.play(duration)
+    pygame.mixer.music.play(duration, fade_ms=fade_in)
 
-def timebound_mode_music(file, duration=-1) : 
+def timebound_mode_music(file, duration=-1, fade_in=2250) : 
     path = os.path.join("audio", "music", "timebound_mode", file)
     pygame.mixer.music.load(path)
     pygame.mixer.music.set_volume(0.85)
-    pygame.mixer.music.play(duration)
+    pygame.mixer.music.play(duration, fade_ms=fade_in)
+
+def gaslight_mode_music(file, duration=-1, fade_in=2250) : 
+    path = os.path.join("audio", "music", "gaslight_mode", file)
+    pygame.mixer.music.load(path)
+    pygame.mixer.music.set_volume(0.85)
+    pygame.mixer.music.play(duration, fade_ms=fade_in)
 
 def sound_effects(file) : 
     path = os.path.join("audio", "sound_effect", file)

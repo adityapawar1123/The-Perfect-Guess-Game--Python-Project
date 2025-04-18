@@ -80,7 +80,10 @@ while True :
 
  while True : #Internal loop
     
-    pygame.mixer.music.stop() #Stops menu music before entering any game mode (so we can start the game mode music in the module)
+    pygame.mixer.music.fadeout(1500) #1500ms = 1.5sec
+    #Stops menu music before entering any game mode (so we can start the game mode music in the module)
+    #I used .fadeout instead of .stop for a better transition
+    
     play_game_mode(current_mode)
     only_tts(common_prompts.rematch_prompts())
 
@@ -91,7 +94,7 @@ while True :
     if loop_question.lower().strip() not in ["yes", "y"] : 
         pygame.mixer.music.stop()
         tts(common_prompts.no_loop_roasts())
-        print("\nHope you enjoyed! Re-run the programme to play again")
+        print("\nHope you enjoyed! Re-run the programme to play again\n")
         exit()
 
     tts("Wanna continue with the same game mode right?")

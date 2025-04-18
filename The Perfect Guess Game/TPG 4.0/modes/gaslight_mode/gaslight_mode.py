@@ -44,7 +44,7 @@ def gaslight_mode() :
         thread.start()
     #Seperating these functn(s) to prevent audio overlapping
 
-    music_thread(audio.normal_mode_music, "normal_mode.wav")
+    music_thread(audio.gaslight_mode_music, "gaslight_mode.wav")
     
     tts(otherprompts.gaslight_mode_explain())
     
@@ -140,7 +140,6 @@ def gaslight_mode() :
                 easyNo = random.randint(1, 100)
                 
                 tts("You have to guess a number between 1 and 100")
-                print(f"Number : {easyNo}")
                 while True : 
                     n1 = input("Guess the number : ")
 
@@ -148,9 +147,12 @@ def gaslight_mode() :
                         n = int(n1)
                         if  easyNo==n : 
                             guessNo += 1
-                            pygame.mixer.music.stop()
+                            pygame.mixer.music.fadeout(1200)
+                            #used fadeout instead of stop for better transition
+                            
                             sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3") #plays the win sound effect 
                             #we're using .Sound for sound effects so no need to use music.stop()
+                            
                             game_win_prompts()
                             easy_highscore()
                             break #breaks the inner loop 
@@ -199,7 +201,7 @@ def gaslight_mode() :
                         n = int(n1)
                         if  mediumNo==n : 
                             guessNo += 1
-                            pygame.mixer.music.stop()
+                            pygame.mixer.music.fadeout(1200)
                             sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3") #plays the win sound effect 
                             game_win_prompts()
                             medium_highscore()
@@ -242,7 +244,7 @@ def gaslight_mode() :
                         n = int(n1)
                         if  hardNo==n : 
                             guessNo += 1
-                            pygame.mixer.music.stop()
+                            pygame.mixer.music.fadeout(1200)
                             sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3") #plays the win sound effect
                             game_win_prompts()
                             hard_highscore()
