@@ -51,14 +51,17 @@ def play_game_mode(mode) :
       from modes.timebound_mode.timebound_mode import timebound_mode
       timebound_mode()
       
+   elif mode == "gaslight" : 
+      from modes.gaslight_mode.gaslight_mode import gaslight_mode
+      gaslight_mode()
 
 
 while True :
  
  tts("\nChoose a game mode!")
- print("Available game modes : \n1.Normal mode 🎯\n2.Timebound mode 🕒")
+ print("Available game modes : \n1.Normal mode 🎯\n2.Timebound mode 🕒\n3.Gaslight mode 😵‍💫")
 
- game_mode = input("Enter game mode(n/t) : ").lower().strip()
+ game_mode = input("Enter game mode(n/t/g) : ").lower().strip()
 
  if game_mode in ["normal", "n", "normal mode", "1", "1.", "one"] : 
     current_mode = "normal"
@@ -66,6 +69,8 @@ while True :
  elif game_mode in ["timebound", "time", "t", "two", "2", "2."] : 
     current_mode = "timebound"
 
+ elif game_mode in ["gaslight", "gas", "g", "three", "3", "3."] : 
+    current_mode = "gaslight"
 
  else : 
     tts("\nInvalid game mode. Choose again.")
