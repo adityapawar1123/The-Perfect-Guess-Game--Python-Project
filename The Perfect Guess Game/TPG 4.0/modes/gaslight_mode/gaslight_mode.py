@@ -33,6 +33,7 @@ def gaslight_mode() :
         engine.runAndWait() 
 
     path = os.path.dirname(os.path.abspath(__file__))
+    endgame_unlocker_path = os.path.join(path, "data", "endgame_unlocker.txt")
 
     from audio import audio 
     def music_thread(func, file, duration=-1) : #by default duration stays on -1 i.e. runs song on infinite loop
@@ -72,12 +73,40 @@ def gaslight_mode() :
                 
                 if guessNo>highscore : 
                     print(f"Highscore guess number : {highscore}")
+                    with open(endgame_unlocker_path) as f2 : 
+                        if f2.read() == "" and highscore<5 : 
+                            endgame_unlock = os.path.dirname(path)
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+
+                            with open(endgame_unlock_path, "w") as f3:
+                                f3.write("unlock")
+
+                            only_tts("Agghh...ugghhh, this is not me, I swear....no no no.....what's happening!")
+                            sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #Make a different sound effect for ths later
+                            print("🎭⚠️ \tENDGAME MODE UNLOCKED\t 🎭⚠️")
+
+
                 else : 
                     sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #plays new highscore music
                     with open(easy_highscore_path, "w") as f1 : 
                         f1.write(str(guessNo))
                         tts("\nNew highscore unlocked!")
                         print(f"Highscore guess number : {guessNo}")
+
+                    with open(endgame_unlocker_path) as f2 : 
+                        if f2.read() == "" and highscore<5 : 
+                            endgame_unlock = os.path.dirname(path)
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+
+                            with open(endgame_unlock_path, "w") as f3:
+                                f3.write("unlock")
+
+                            only_tts("Agghh...ugghhh, this is not me, I swear....no no no.....what's happening!")
+                            sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #Make a different sound effect for ths later
+                            print("🎭⚠️ \tENDGAME MODE UNLOCKED\t 🎭⚠️")
+
+
+
 
         def medium_highscore() :
             medium_highscore_path = os.path.join(path, "highscores", "medium_highscore.txt") 
@@ -91,12 +120,39 @@ def gaslight_mode() :
                 
                 if guessNo>highscore : 
                     print(f"Highscore guess number : {highscore}")
+                    with open(endgame_unlocker_path) as f2 : 
+                        if f2.read() == "" and highscore<7 : 
+                            endgame_unlock = os.path.dirname(path)
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+
+                            with open(endgame_unlock_path, "w") as f3:
+                                f3.write("unlock")
+
+                            only_tts("Agghh...ugghhh, this is not me, I swear....no no no.....what's happening!")
+                            sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #Make a different sound effect for ths later
+                            print("🎭⚠️ \tENDGAME MODE UNLOCKED\t 🎭⚠️")
+
+
                 else : 
                     sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3")
                     with open(medium_highscore_path, "w") as f1 : 
                         f1.write(str(guessNo))
                         tts("\nNew highscore unlocked!")
                         print(f"Highscore guess number : {guessNo}")
+
+                    with open(endgame_unlocker_path) as f2 : 
+                        if f2.read() == "" and highscore<7 : 
+                            endgame_unlock = os.path.dirname(path)
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+
+                            with open(endgame_unlock_path, "w") as f3:
+                                f3.write("unlock")
+
+                            only_tts("Agghh...ugghhh, this is not me, I swear....no no no.....what's happening!")
+                            sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #Make a different sound effect for ths later
+                            print("🎭⚠️ \tENDGAME MODE UNLOCKED\t 🎭⚠️")
+
+
 
         def hard_highscore() : 
             hard_highscore_path = os.path.join(path, "highscores", "hard_highscore.txt")
@@ -110,12 +166,40 @@ def gaslight_mode() :
                 
                 if guessNo>highscore : 
                     print(f"Highscore guess number : {highscore}")
+                    with open(endgame_unlocker_path) as f2 : 
+                        if f2.read() == "" and highscore<10 : 
+                            endgame_unlock = os.path.dirname(path)
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+
+                            with open(endgame_unlock_path, "w") as f3:
+                                f3.write("unlock")
+
+                            only_tts("Agghh...ugghhh, this is not me, I swear....no no no.....what's happening!")
+                            sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #Make a different sound effect for ths later
+                            print("🎭⚠️ \tENDGAME MODE UNLOCKED\t 🎭⚠️")
+
+
+                
                 else : 
                     sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3")
                     with open(hard_highscore_path, "w") as f1 :
                         f1.write(str(guessNo))
                         tts("\nNew highscore unlocked!")
                         print(f"Highscore guess number : {guessNo}")
+
+                    with open(endgame_unlocker_path) as f2 : 
+                        if f2.read() == "" and highscore<10 : 
+                            endgame_unlock = os.path.dirname(path)
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+
+                            with open(endgame_unlock_path, "w") as f3:
+                                f3.write("unlock")
+
+                            only_tts("Agghh...ugghhh, this is not me, I swear....no no no.....what's happening!")
+                            sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #Make a different sound effect for ths later
+                            print("🎭⚠️ \tENDGAME MODE UNLOCKED\t 🎭⚠️")
+
+
 
 
         def game_win_prompts() :

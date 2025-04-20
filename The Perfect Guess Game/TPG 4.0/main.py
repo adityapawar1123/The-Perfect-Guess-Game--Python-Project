@@ -55,13 +55,28 @@ def play_game_mode(mode) :
       from modes.gaslight_mode.gaslight_mode import gaslight_mode
       gaslight_mode()
 
+   elif mode == "endgame" : 
+      from modes.endgame_mode.endgame_mode import endgame_mode
+      endgame_mode()
+
+file_path = os.path.abspath(__file__) #Gives absolute path of main.py
+dir_path = os.path.dirname(file_path) #Gives absolute path of our folder in which main.py is present
+endgame_unlock_path = os.path.join(dir_path, "modes", "endgame_mode", "data", "endgame_unlock.txt")
+
 
 while True :
+ with open(endgame_unlock_path, "r") as f : 
+    endgame_condition = f.read()
  
- tts("\nChoose a game mode!")
- print("Available game modes : \n1.Normal mode 🎯\n2.Timebound mode 🕒\n3.Gaslight mode 😵‍💫")
+ if endgame_condition == "unlock" : 
+   tts("\nChoose a game mode!")
+   print("Available game modes : \n1.Normal mode 🎯\n2.Timebound mode 🕒\n3.Gaslight mode 😵‍💫\n4.Endgame mode 🎭⚠️ (WARNING : One-time event)")
+   game_mode = input("Enter game mode(n/t/g/e) : ").lower().strip()
 
- game_mode = input("Enter game mode(n/t/g) : ").lower().strip()
+ else : 
+   tts("\nChoose a game mode!")
+   print("Available game modes : \n1.Normal mode 🎯\n2.Timebound mode 🕒\n3.Gaslight mode 😵‍💫")
+   game_mode = input("Enter game mode(n/t/g) : ").lower().strip()
 
  if game_mode in ["normal", "n", "normal mode", "1", "1.", "one"] : 
     current_mode = "normal"
@@ -71,6 +86,17 @@ while True :
 
  elif game_mode in ["gaslight", "gas", "g", "three", "3", "3."] : 
     current_mode = "gaslight"
+
+ elif game_mode in ["endgame", "end game", "e", "eg", "e g"] : 
+    if endgame_condition == "unlock" : 
+       current_mode = "endgame"
+    
+    else : 
+       pygame.mixer.music.pause()
+       only_tts("Aghh...ughh....it hurts, this is not me...I...aghh... no no... ouch")
+       print("\nGet a highscore below 5 in gaslight mode to unlock Endgame Mode")
+       pygame.mixer.music.unpause()
+       continue
 
  else : 
     tts("\nInvalid game mode. Choose again.")
@@ -85,21 +111,35 @@ while True :
     #I used .fadeout instead of .stop for a better transition
     
     play_game_mode(current_mode)
-    only_tts(common_prompts.rematch_prompts())
-
 
     music_thread(audio.menu_music, "menu_music.wav") #Starts menu music if player is back in menu
     
-    loop_question = input(("\nWanna play one more game?(yes/no) : "))
-    if loop_question.lower().strip() not in ["yes", "y"] : 
-        pygame.mixer.music.stop()
-        tts(common_prompts.no_loop_roasts())
-        print("\nHope you enjoyed! Re-run the programme to play again\n")
-        exit()
+    if current_mode != "endgame" : 
+      only_tts(common_prompts.rematch_prompts())
+      
+      loop_question = input(("\nWanna play one more game?(yes/no) : "))
+      if loop_question.lower().strip() not in ["yes", "y"] : 
+         pygame.mixer.music.stop()
+         tts(common_prompts.no_loop_roasts())
+         print("\nHope you enjoyed! Re-run the programme to play again\n")
+         exit()
 
-    tts("Wanna continue with the same game mode right?")
-    game_mode_loop_question = input("Do you want to continue with the same game mode?(y/n) : ")
+      tts("Wanna continue with the same game mode right?")
+      game_mode_loop_question = input("Do you want to continue with the same game mode?(y/n) : ")
 
-    if game_mode_loop_question.lower().strip() not in ["y", "yes"] : 
-         break # break inner loop, go back to "choose a game mode"
-    
+      if game_mode_loop_question.lower().strip() not in ["y", "yes"] : 
+            break # break inner loop, go back to "choose a game mode"
+   
+
+    else : #For endgame mode
+      only_tts("Well...that was crazy, anyways I'm okay now....wanna play one more game?")
+
+      loop_question = input(("\nWanna play one more game?(yes/no) : "))
+      if loop_question.lower().strip() not in ["yes", "y"] : 
+         pygame.mixer.music.stop()
+         only_tts("Well yeah, can't even blame you after what just happened. It's okay we'll play some other time")
+         print("\nHope you enjoyed! Re-run the programme to play again\n")
+         exit()
+      
+      else : 
+         break 
