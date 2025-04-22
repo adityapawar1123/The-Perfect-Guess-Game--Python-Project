@@ -46,6 +46,10 @@ def timebound_mode() :
     import pygame
     pygame.mixer.init()
 
+    path = os.path.dirname(os.path.abspath(__file__))
+    mode_path = os.path.dirname(path)
+    tpg_4 = os.path.dirname(mode_path)
+
     from audio import audio 
     def music_thread(func, file, duration=-1) : #by default duration stays on -1 i.e. runs song on infinite loop
         thread = threading.Thread(target= func, args=(file, duration), daemon=True)
@@ -55,6 +59,23 @@ def timebound_mode() :
         thread = threading.Thread(target= func, args=(file,), daemon=True)
         thread.start()
     #Seperating these functn(s) to prevent audio overlapping
+    def voiceline_thread(func) : 
+        thread = threading.Thread(target=func, daemon=False)
+        thread.start()
+
+    def jokingo_hints() : 
+        endgame_hinter = os.path.join(tpg_4, "data", "endgame_hinter.txt")
+        with open(endgame_hinter) as f :
+            data1 = f.read()
+
+        if int(data1)%4 == 0 and int(data1) != 0 : 
+            from audio.voicelines import endgame_hint
+            voiceline_thread(endgame_hint())
+        
+        data_update = int(data1) + 1
+        with open(endgame_hinter, "w") as f : 
+            f.write(str(data_update))
+
 
     music_thread(audio.timebound_mode_music, "timebound_mode.wav") #Starts music
 
@@ -146,6 +167,7 @@ def timebound_mode() :
                                     print("\n✨YOU WON!✨")
                                     only_tts("You won!")
                                     only_tts(otherprompts.win_prompts())
+                                    jokingo_hints()
                                     return "won"
                                 
                                     

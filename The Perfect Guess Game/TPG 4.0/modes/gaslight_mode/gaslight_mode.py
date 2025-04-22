@@ -32,8 +32,29 @@ def gaslight_mode() :
         engine.say(text)
         engine.runAndWait() 
 
+    def voiceline_thread(func) : 
+        thread = threading.Thread(target=func, daemon=False)
+        thread.start()
+
     path = os.path.dirname(os.path.abspath(__file__))
     endgame_unlocker_path = os.path.join(path, "data", "endgame_unlocker.txt")
+
+    mode_path = os.path.dirname(path)
+    tpg_4 = os.path.dirname(mode_path)
+
+    def jokingo_hints() : 
+        endgame_hinter = os.path.join(tpg_4, "data", "endgame_hinter.txt")
+        with open(endgame_hinter) as f :
+            data1 = f.read()
+
+        if int(data1)%4 == 0 and int(data1) != 0 : 
+            from audio.voicelines import endgame_hint
+            voiceline_thread(endgame_hint())
+        
+        data_update = int(data1) + 1
+        with open(endgame_hinter, "w") as f : 
+            f.write(str(data_update))
+
 
     from audio import audio 
     def music_thread(func, file, duration=-1) : #by default duration stays on -1 i.e. runs song on infinite loop
@@ -239,6 +260,7 @@ def gaslight_mode() :
                             
                             game_win_prompts()
                             easy_highscore()
+                            jokingo_hints()
                             break #breaks the inner loop 
                             
                         elif n<easyNo : 
@@ -289,6 +311,7 @@ def gaslight_mode() :
                             sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3") #plays the win sound effect 
                             game_win_prompts()
                             medium_highscore()
+                            jokingo_hints()
                             break #breaks the inner loop
                             
                         elif n<mediumNo : 
@@ -332,6 +355,7 @@ def gaslight_mode() :
                             sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3") #plays the win sound effect
                             game_win_prompts()
                             hard_highscore()
+                            jokingo_hints()
                             break #breaks inner loop
                             
                         elif n<hardNo : 
