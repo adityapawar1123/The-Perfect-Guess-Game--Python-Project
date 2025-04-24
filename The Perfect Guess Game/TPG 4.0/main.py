@@ -1,4 +1,3 @@
-import random 
 import pyttsx3
 engine = pyttsx3.init()
 
@@ -61,7 +60,7 @@ def play_game_mode(mode) :
 
 file_path = os.path.abspath(__file__) #Gives absolute path of main.py
 dir_path = os.path.dirname(file_path) #Gives absolute path of our folder in which main.py is present
-endgame_unlock_path = os.path.join(dir_path, "modes", "endgame_mode", "data", "endgame_unlock.txt")
+endgame_unlock_path = os.path.join(dir_path, "modes", "endgame_mode", "endgame_unlock.txt")
 
 
 while True :
@@ -132,14 +131,21 @@ while True :
    
 
     else : #For endgame mode
-      only_tts("Well...that was crazy, anyways I'm okay now....wanna play one more game?")
+      result_path = os.path.join(dir_path, "modes", "endgame_mode", "endgame_result.txt")
+      with open(result_path) as f : 
+         result = f.read()
 
-      loop_question = input(("\nWanna play one more game?(yes/no) : "))
-      if loop_question.lower().strip() not in ["yes", "y"] : 
-         pygame.mixer.music.stop()
-         only_tts("Well yeah, can't even blame you after what just happened. It's okay we'll play some other time")
-         print("\nHope you enjoyed! Re-run the programme to play again\n")
-         exit()
+      if result != "lost" : 
+         only_tts("Well...that was crazy, anyways I'm okay now....wanna play one more game?")
+
+         loop_question = input(("\nWanna play one more game?(yes/no) : "))
+         if loop_question.lower().strip() not in ["yes", "y"] : 
+            pygame.mixer.music.stop()
+            only_tts("Well yeah, can't even blame you after what just happened. It's okay we'll play some other time")
+            exit()
+         
+         else : 
+            break 
       
       else : 
-         break 
+         exit()

@@ -1,5 +1,6 @@
 import os
 import threading
+import time
 
 # Set the environment variable BEFORE importing pygame
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"

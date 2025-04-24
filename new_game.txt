@@ -1,0 +1,5 @@
+endgame_unlocker.txt = ""
+endgame_hinter_unlocker.txt = ""
+endgame_hinter.txt = 1
+endgame_result.txt = ""
+endgame_unlock.txt = lock

@@ -43,17 +43,23 @@ def gaslight_mode() :
     tpg_4 = os.path.dirname(mode_path)
 
     def jokingo_hints() : 
-        endgame_hinter = os.path.join(tpg_4, "data", "endgame_hinter.txt")
-        with open(endgame_hinter) as f :
-            data1 = f.read()
-
-        if int(data1)%4 == 0 and int(data1) != 0 : 
-            from audio.voicelines import endgame_hint
-            voiceline_thread(endgame_hint())
+        endgame_hinter_unlocker_path = os.path.join(tpg_4, "data", "endgame_hinter_unlocker.txt")
+        with open(endgame_hinter_unlocker_path) as f : 
+            unlocker = f.read()
         
-        data_update = int(data1) + 1
-        with open(endgame_hinter, "w") as f : 
-            f.write(str(data_update))
+        endgame_hinter = os.path.join(tpg_4, "data", "endgame_hinter.txt")
+        
+        if unlocker != "lock" : 
+            with open(endgame_hinter) as f :
+                data1 = f.read()
+
+            if int(data1)%4 == 0 and int(data1) != 0 : 
+                from audio.voicelines import endgame_hint
+                voiceline_thread(endgame_hint())
+            
+            data_update = int(data1) + 1
+            with open(endgame_hinter, "w") as f : 
+                f.write(str(data_update))
 
 
     from audio import audio 
@@ -95,15 +101,15 @@ def gaslight_mode() :
                 if guessNo>highscore : 
                     print(f"Highscore guess number : {highscore}")
                     with open(endgame_unlocker_path) as f2 : 
-                        if f2.read() == "" and highscore<5 : 
+                        if f2.read() != "lock" and highscore<5 : 
                             endgame_unlock = os.path.dirname(path)
-                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "endgame_unlock.txt")
 
                             with open(endgame_unlock_path, "w") as f3:
                                 f3.write("unlock")
 
                             only_tts("Agghh...ugghhh, this is not me, I swear....no no no.....what's happening!")
-                            sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #Make a different sound effect for ths later
+                            sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3") #Make a different sound effect for this later
                             print("🎭⚠️ \tENDGAME MODE UNLOCKED\t 🎭⚠️")
 
 
@@ -115,9 +121,9 @@ def gaslight_mode() :
                         print(f"Highscore guess number : {guessNo}")
 
                     with open(endgame_unlocker_path) as f2 : 
-                        if f2.read() == "" and highscore<5 : 
+                        if f2.read() != "lock" and highscore<5 : 
                             endgame_unlock = os.path.dirname(path)
-                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "endgame_unlock.txt")
 
                             with open(endgame_unlock_path, "w") as f3:
                                 f3.write("unlock")
@@ -142,9 +148,9 @@ def gaslight_mode() :
                 if guessNo>highscore : 
                     print(f"Highscore guess number : {highscore}")
                     with open(endgame_unlocker_path) as f2 : 
-                        if f2.read() == "" and highscore<7 : 
+                        if f2.read() != "lock" and highscore<7 : 
                             endgame_unlock = os.path.dirname(path)
-                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "endgame_unlock.txt")
 
                             with open(endgame_unlock_path, "w") as f3:
                                 f3.write("unlock")
@@ -162,9 +168,9 @@ def gaslight_mode() :
                         print(f"Highscore guess number : {guessNo}")
 
                     with open(endgame_unlocker_path) as f2 : 
-                        if f2.read() == "" and highscore<7 : 
+                        if f2.read() != "lock" and highscore<7 : 
                             endgame_unlock = os.path.dirname(path)
-                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "endgame_unlock.txt")
 
                             with open(endgame_unlock_path, "w") as f3:
                                 f3.write("unlock")
@@ -188,9 +194,9 @@ def gaslight_mode() :
                 if guessNo>highscore : 
                     print(f"Highscore guess number : {highscore}")
                     with open(endgame_unlocker_path) as f2 : 
-                        if f2.read() == "" and highscore<10 : 
+                        if f2.read() != "lock" and highscore<10 : 
                             endgame_unlock = os.path.dirname(path)
-                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "endgame_unlock.txt")
 
                             with open(endgame_unlock_path, "w") as f3:
                                 f3.write("unlock")
@@ -209,9 +215,9 @@ def gaslight_mode() :
                         print(f"Highscore guess number : {guessNo}")
 
                     with open(endgame_unlocker_path) as f2 : 
-                        if f2.read() == "" and highscore<10 : 
+                        if f2.read() != "lock" and highscore<10 : 
                             endgame_unlock = os.path.dirname(path)
-                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "data", "endgame_unlock.txt")
+                            endgame_unlock_path = os.path.join(endgame_unlock, "endgame_mode", "endgame_unlock.txt")
 
                             with open(endgame_unlock_path, "w") as f3:
                                 f3.write("unlock")

@@ -54,17 +54,23 @@ def normal_mode() :
     tpg_4 = os.path.dirname(mode_path)
 
     def jokingo_hints() : 
-        endgame_hinter = os.path.join(tpg_4, "data", "endgame_hinter.txt")
-        with open(endgame_hinter) as f :
-            data1 = f.read()
-
-        if int(data1)%4 == 0 and int(data1) != 0 : 
-            from audio.voicelines import endgame_hint
-            voiceline_thread(endgame_hint())
+        endgame_hinter_unlocker_path = os.path.join(tpg_4, "data", "endgame_hinter_unlocker.txt")
+        with open(endgame_hinter_unlocker_path) as f : 
+            unlocker = f.read()
         
-        data_update = int(data1) + 1
-        with open(endgame_hinter, "w") as f : 
-            f.write(str(data_update))
+        endgame_hinter = os.path.join(tpg_4, "data", "endgame_hinter.txt")
+        
+        if unlocker != "lock" : 
+            with open(endgame_hinter) as f :
+                data1 = f.read()
+
+            if int(data1)%4 == 0 and int(data1) != 0 : 
+                from audio.voicelines import endgame_hint
+                voiceline_thread(endgame_hint())
+            
+            data_update = int(data1) + 1
+            with open(endgame_hinter, "w") as f : 
+                f.write(str(data_update))
 
         
 
