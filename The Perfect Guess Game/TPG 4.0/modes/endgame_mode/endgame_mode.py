@@ -43,8 +43,9 @@ def endgame_mode() :
         f.write("lock")
     #So that gaslight mode doesn't keep unlocking it everytime cuz of the highscore --> One-time event
 
-
-    endgame_hinter_unlocker_path = os.path.join("data", "endgame_hinter_unlocker.txt")
+    modes = os.path.dirname(dir_path)
+    main = os.path.dirname(modes)
+    endgame_hinter_unlocker_path = os.path.join(main, "data", "endgame_hinter_unlocker.txt")
     with open(endgame_hinter_unlocker_path, "w") as f : 
         f.write("lock")
     #So that Jokingo's creepy lines after every 4 games will stop
@@ -64,7 +65,7 @@ def endgame_mode() :
     voicelines.endgame_kate_intro()   #Starts the sad/psycho Kate intro
     
     from audio import audio 
-    music_thread(audio.normal_mode_music, "normal_mode.wav")
+    music_thread(audio.endgame_mode_music, "endgame_mode.wav")
     
     print("\nGUESS A NUMBER BETWEEN 1 AND 500 UNDER 25 ATTEMPTS TO SAVE KATE\n")
     time.sleep(1.5)
@@ -76,15 +77,15 @@ def endgame_mode() :
     
     while True : 
         hints = random.choice(["\nGuess a higher number", "\nGuess a lower number"])
-        print(f"The number is : {n}")
-        
+
         if attempts_left == 22 : 
-            pygame.mixer.music.pause()
+            pygame.mixer.music.fadeout(1500)
             
             voicelines.endgame_jokingo_reveal()
 
-            pygame.mixer.music.unpause()
             sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3")  
+            music_thread(audio.endgame_mode_music, "endgame_mode.wav")
+
             print("💉 GAINED 7 TRUTH SERUMS 💉")
             truth_serum_activate = True 
 
@@ -96,7 +97,7 @@ def endgame_mode() :
         else : 
             guessNo = input("\nGuess number : ").lower().strip()
 
-        endgame_result_path = os.path.join("modes", "endgame_mode", "endgame_result.txt")
+        endgame_result_path = os.path.join(dir_path, "endgame_result.txt")
         if attempts_left == 0 : 
             print("YOU LOST! KATE GLITCHED OFF INTO INSANITY")
             sound_effect_thread(audio.sound_effects, "loss_sound_effect.mp3")
@@ -130,11 +131,14 @@ def endgame_mode() :
 
                     elif guessNo == n : 
                         sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3")
+                        pygame.mixer.music.fadeout(1500)
+                        music_thread(audio.endgame_mode_music, "endgame_pleasant.wav")
                         print("YOU WON! YOU SAVED KATE")
                         with open(endgame_result_path, "w") as f : 
                             f.write("won")
                         
                         voicelines.endgame_win()
+                        pygame.mixer.music.fadeout(1000)
                         return #better than breaking loop, js exit the endgame mode
                 
                 except ValueError :
@@ -170,10 +174,13 @@ def endgame_mode() :
                     elif guessNo == n : 
                         print("YOU WON! YOU SAVED KATE")
                         sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3")
+                        pygame.mixer.music.fadeout(1500)
+                        music_thread(audio.endgame_mode_music, "endgame_pleasant.wav")
                         with open(endgame_result_path, "w") as f : 
                             f.write("won")
                         
                         voicelines.endgame_win()
+                        pygame.mixer.music.fadeout(1000)
                         return
                 
                 else : 
@@ -195,12 +202,15 @@ def endgame_mode() :
 
                     elif guessNo == n : 
                         sound_effect_thread(audio.sound_effects, "win_sound_effect.mp3")
+                        pygame.mixer.music.fadeout(1500)
+                        music_thread(audio.endgame_mode_music, "endgame_pleasant.wav")
                         print("YOU WON! YOU SAVED KATE")
                         
                         with open(endgame_result_path, "w") as f : 
                             f.write("won")
                         
                         voicelines.endgame_win()
+                        pygame.mixer.music.fadeout(1000)
                         return
 
             except ValueError : 

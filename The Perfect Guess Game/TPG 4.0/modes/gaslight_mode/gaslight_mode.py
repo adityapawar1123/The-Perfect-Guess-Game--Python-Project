@@ -244,7 +244,7 @@ def gaslight_mode() :
 
             else : 
                 print(f"\nYou won! The answer is {n}\nNumber of guesses = {guessNo}")
-                only_tts(roasts.slow_guess_roasts())  
+                only_tts(roasts.slow_guess_roasts(guessNo))  
 
 
         if difficulty.lower().strip() in ["e", "easy", "ez"] : 
