@@ -64,7 +64,7 @@ def game_mode() :
    ]
    frame = bkg[0]
 
-   IDLE_TIME = 3500 #in ms
+   IDLE_TIME = 2000 #in ms
    FRAME_DURATION = 300
 
    last_cycle_time = pygame.time.get_ticks()
@@ -122,7 +122,7 @@ def game_mode() :
 
       if normal_button.draw() : 
          from modes.normal_mode.normal_mode import normal_mode
-         normal_mode()
+         normal_mode(screen, screen_width, screen_height)
       
       elif timebound_button.draw() : 
          from modes.timebound_mode.timebound_mode import timebound_mode

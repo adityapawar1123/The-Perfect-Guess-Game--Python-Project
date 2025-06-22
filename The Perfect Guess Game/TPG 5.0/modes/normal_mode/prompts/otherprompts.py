@@ -3,17 +3,16 @@ import random
 
 def normal_mode_explain() : 
     normal_mode_explain = [
-    "\nThe rules are simple. I choose a number and you guess it. \nLet's see how many attempts you need before you guess the right number.",
-    "\nRules are simple, I'll pick a number, and your job is to guess it. Let's see how fast you get it right!",
-    "\nRules are simple, I think of a number, and you try to guess what it is.",
-    "\nRules are simple, I've chosen a number. Can you figure out what it is, and how quickly?",
-    "\nRules are simple, guess the number I'm thinking of. That's it!",
-    "\nRules are simple, I pick a number, you guess. Let's see how many tries you need!",
-    "\nRules are simple, guess the number I've chosen. No tricks, just your brain versus my number.",
-    "\nRules are simple, I've got a number in mind. You have to guess it. How hard could it be?",
-    "\nRules are simple, it's a guessing game. I choose a number, and you try to find it!",
-    "\nRules are simple, I've locked in a number. Can you guess it before your guesses run out?",
-    "\nRules are simple, I picked a number. All you gotta do is guess it. Good luck!"
+    "Rules are simple, I'll pick a number, and your job is to guess it. Let's see how fast you get it right!",
+    "Rules are simple, I think of a number, and you try to guess what it is.",
+    "Rules are simple, I've chosen a number. Can you figure out what it is, and how quickly?",
+    "Rules are simple, guess the number I'm thinking of. That's it!",
+    "Rules are simple, I pick a number, you guess. Let's see how many tries you need!",
+    "Rules are simple, guess the number I've chosen. No tricks, just your brain versus my number.",
+    "Rules are simple, I've got a number in mind. You have to guess it. How hard could it be?",
+    "Rules are simple, it's a guessing game. I choose a number, and you try to find it!",
+    "Rules are simple, I've locked in a number. Can you guess it before your guesses run out?",
+    "Rules are simple, I picked a number. All you gotta do is guess it. Good luck!"
 ]
     return random.choice(normal_mode_explain)
 
