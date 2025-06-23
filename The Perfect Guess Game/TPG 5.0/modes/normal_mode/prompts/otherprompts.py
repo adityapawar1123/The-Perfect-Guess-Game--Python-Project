@@ -30,17 +30,17 @@ def first_guess_prompts() :
     "First guess?! That's legendary status right there. Are you for real?"]
     return random.choice(first_guess_prompts)
 
-def under4_guess_prompts() : 
+def under4_guess_prompts(guessNo) : 
     under4_guess_prompts = [
     "Wow, you cracked it fast! Did you hack the game or are you just that good?",
-    "Speedy! You guessed it in under 4 tries. Are you sure you're not a psychic?",
+    f"Speedy! You guessed it in {guessNo} tries. Are you sure you're not a psychic?",
     "You're a natural! Guessing that fast is no easy feat!",
     "Did you just predict the future? That was lightning speed!",
-    "Impressive! Under 4 guesses? You must have a secret superpower.",
+    f"Impressive! {guessNo} guesses? You must have a secret superpower.",
     "Whoa! That was fast. You might just be a number-guessing champion!",
-    "Alright, alright, I see you! 4 guesses or less, you're on fire!",
+    f"Alright, alright, I see you! {guessNo}, you're on fire!",
     "How did you do that? You guessed it faster than a cheetah on a caffeine rush!",
-    "Under 4 guesses? That's some next-level genius stuff right there.",
+    f"In {guessNo} guesses? That's some next-level genius stuff right there.",
     "Okay, I'm impressed. You crushed that in record time. Can you teach me your ways?"]
     return random.choice(under4_guess_prompts)
 

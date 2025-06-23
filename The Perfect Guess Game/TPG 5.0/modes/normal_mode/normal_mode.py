@@ -5,7 +5,7 @@ def normal_mode(screen, screen_width, screen_height) :
     import time
     
     from modes.normal_mode.prompts import roasts, otherprompts
-    from data.prompts import common_prompts
+    from data.prompts.common_prompts import rematch_prompts
     from UI.utils import Button
 
     # Set the environment variable BEFORE importing pygame
@@ -64,10 +64,7 @@ def normal_mode(screen, screen_width, screen_height) :
     
     raw_bg = pygame.image.load(os.path.join(tpg_5, "UI", "ui", "game_bkg.png")).convert_alpha()
     bkg = pygame.transform.scale(raw_bg, (screen_width, screen_height))
-    input_box_raw = pygame.image.load(os.path.join(tpg_5, "UI", "ui", "input_box.png")).convert_alpha()
-    box_w = int(screen_width*0.4)
-    box_h = int(screen_height*0.3)
-    input_box = pygame.transform.scale(input_box_raw, (box_w, box_h))
+    
 
     kate_db_path = os.path.join(tpg_5, "UI", "ui", "kate_db.png")
     voice_db_path = os.path.join(tpg_5, "UI", "ui", "voice_db.png")
@@ -87,7 +84,7 @@ def normal_mode(screen, screen_width, screen_height) :
         if max_width is None : 
             max_width = int(db_width*0.9) # 90% of db width
         
-        words = text.split(' ') # splits whole text into words
+        words = text.split(' ') # splits whole text into words, words is a list now with each words as an item of the list
         lines = []              # stores each final line that will be rendered
         current_line = ''       # current line being built
 
@@ -227,7 +224,7 @@ def normal_mode(screen, screen_width, screen_height) :
     music_thread(audio.normal_mode_music, "normal_mode.wav")
 
     from modes.normal_mode.prompts.otherprompts import normal_mode_explain, first_guess_prompts, under4_guess_prompts, mid_guess_prompts
-    from modes.normal_mode.prompts.roasts import invalid_input_roasts, slow_guess_roasts
+    from modes.normal_mode.prompts.roasts import invalid_input_roasts, slow_guess_roasts, game_quit
     
     #Game vars
     difficulty_selected = False 
@@ -265,6 +262,8 @@ def normal_mode(screen, screen_width, screen_height) :
             pygame.display.flip()
 
             tts(screen, "You have to guess a number between 1 and 100", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+            n = random.randint(1,100)
+            
 
             difficulty_selected = True
 
@@ -277,7 +276,8 @@ def normal_mode(screen, screen_width, screen_height) :
             pygame.display.flip()
 
             tts(screen, "You have to guess a number between 1 and 500", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-
+            n = random.randint(1,500)
+            
             difficulty_selected = True
         
         elif hard_button.draw() : 
@@ -289,6 +289,7 @@ def normal_mode(screen, screen_width, screen_height) :
             pygame.display.flip()
 
             tts(screen, "You have to guess a number between 1 and 1000", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+            n = random.randint(1,1000)
 
             difficulty_selected = True
         
@@ -304,5 +305,183 @@ def normal_mode(screen, screen_width, screen_height) :
                 quit()
         
         clock.tick(fps)
+
+    
+
+
+    game_over = False 
+    scoreboard_active = False 
+    kate = kate_img[0]
+    guessNo = 0 
+    
+    input_box_raw = pygame.image.load(os.path.join(tpg_5, "UI", "ui", "input_box.png")).convert_alpha()
+    box_w = int(screen_width*0.4)
+    box_h = int(screen_height*0.3)
+    input_box = pygame.transform.scale(input_box_raw, (box_w, box_h))
+    box_x  = int(screen_width * 0.5 - box_w * 0.5) # centered
+    box_y  = int(screen_height * 0.5 - box_h*0.5)
+
+    font_size = int(screen_height*0.05)
+    input_font = pygame.font.Font(input_font_path, font_size)
+    padding_x = int(box_w*0.23) # 23% of box width
+    text_x = box_x + padding_x
+    text_y = box_y + ((box_h - font_size) // 4) + box_y*0.06
+    user_text = ""    # This will hold what the player types
+
+    last_cusor_toggle = pygame.time.get_ticks()
+    CURSOR_DURATION = 500 # in ms
+    cursor_visible = True 
+
+    quit_button = Button("01_quit.png", "02_quit.png", "03_quit.png", (0.88, 0.865), screen, screen_width, screen_height)
+    #replace this w a BACK button later
+
+    while not game_over : 
+        current = pygame.time.get_ticks()
+
+        screen.blit(bkg, (0,0))
+        screen.blit(input_box, (box_x, box_y))
+
+        if quit_button.draw() : 
+            
+            pygame.mixer.music.fadeout(2000)
+            
+            screen.blit(kate_img[1], (kate_x, kate_y))
+            screen.blit(kate_db, (db_x, db_y))
+            pygame.display.flip()
+
+            tts(screen, game_quit(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+            music_thread(audio.menu_music, "menu_music.wav")
+            game_over = True
+
+        
+        if current - last_cusor_toggle >= CURSOR_DURATION : 
+            last_cusor_toggle = current 
+            cursor_visible = not cursor_visible
+
+        for event in pygame.event.get() :
+
+            if event.type == pygame.QUIT : 
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.KEYDOWN : 
+
+                if event.key == pygame.K_RETURN:
+
+                    if user_text != '' : 
+                        try : 
+                            user_text = int(user_text)
+                            
+                            if user_text > n : 
+                                
+                                screen.blit(kate_img[1], (kate_x, kate_y))
+                                screen.blit(kate_db, (db_x, db_y))
+                                pygame.display.flip()
+                                
+                                tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                guessNo += 1
+
+                            elif user_text < n : 
+                                
+                                screen.blit(kate_img[1], (kate_x, kate_y))
+                                screen.blit(kate_db, (db_x, db_y))
+                                pygame.display.flip()
+                                
+                                tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                guessNo += 1
+
+                            elif user_text == n : 
+                                
+                                if difficulty == "easy" : 
+                                    if guessNo == 1 : 
+                                        win_prompt = first_guess_prompts()
+                                    elif 2 <= guessNo < 4 : 
+                                        win_prompt = under4_guess_prompts(guessNo)
+                                    elif 4 <= guessNo <= 6 : 
+                                        win_prompt = mid_guess_prompts()
+                                    else : 
+                                        win_prompt = slow_guess_roasts()
+                                
+                                elif difficulty == "medium" : 
+                                    if guessNo == 1 : 
+                                        win_prompt = first_guess_prompts()
+                                    elif 2 <= guessNo < 6 : 
+                                        win_prompt = under4_guess_prompts(guessNo)
+                                    elif 6 <= guessNo <= 8 : 
+                                        win_prompt = mid_guess_prompts()
+                                    else : 
+                                        win_prompt = slow_guess_roasts()
+                                
+                                elif difficulty == "hard" : 
+                                    if guessNo == 1 : 
+                                        win_prompt = first_guess_prompts()
+                                    elif 2 <= guessNo < 8 : 
+                                        win_prompt = under4_guess_prompts(guessNo)
+                                    elif 8 <= guessNo <= 9 : 
+                                        win_prompt = mid_guess_prompts()
+                                    else : 
+                                        win_prompt = slow_guess_roasts()
+                                
+                                screen.blit(kate_img[1], (kate_x, kate_y))
+                                screen.blit(kate_db, (db_x, db_y))
+                                pygame.display.flip()
+
+                                tts(screen, win_prompt, int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                guessNo += 1
+                                print(guessNo) #FOR DEBUGGING
+                                
+                                pygame.mixer.music.fadeout(2000)
+                                music_thread(audio.menu_music, "menu_music.wav")
+                                game_over = True
+                        
+                        except ValueError : 
+
+                            pygame.mixer.music.pause()
+
+                            screen.blit(kate_img[1], (kate_x, kate_y))
+                            screen.blit(kate_db, (db_x, db_y))
+                            pygame.display.flip()
+                                
+                            tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                            
+                            pygame.mixer.music.unpause()
+                    
+                    user_text = ""       # clear after enter, or break loop, etc.
+                
+                elif event.key == pygame.K_BACKSPACE:
+                    user_text = user_text[:-1]   # remove last character
+                else:
+                    new_text = user_text + event.unicode 
+                    new_surf = input_font.render(new_text, True, (40, 209, 52, 255))
+                    # only accept if it fits within the box (minus padding)
+                    if new_surf.get_width() <= (box_w - 2*padding_x):
+                        user_text = new_text
+            
+        text_surface = input_font.render(user_text, True, (40, 209, 52, 255))
+        
+        text_w = text_surface.get_width()
+        text_h = text_surface.get_height()
+        cursor_y = text_y + text_h
+        cursor_start = text_x + text_w + 2
+        cursor_end = cursor_start + font_size//2
+    
+        if cursor_visible : 
+            pygame.draw.line(screen, # game window pe draw karo
+                            (40, 209, 52, 255), # rgba color code for white
+                            (cursor_start, cursor_y), # start coordinates (x,y)
+                            (cursor_end, cursor_y), # end coordinates (x,y) --> 236 - 200 = 36 (to match font size)
+                            2) #thickness of the line in pixels
+            
+        
+        screen.blit(text_surface, (text_x, text_y))
+        screen.blit(kate_img[0], (kate_x, kate_y))
+
+
+        pygame.display.flip()
+        clock.tick(60)
+
+
+
+
 
     
