@@ -262,9 +262,10 @@ def timebound_mode(screen, screen_width, screen_height) :
     timer_selected = False 
     timer_prompt = True
     
-    twenty_secs_button = Button("01_20secs.png", "02_20secs.png", "03_20secs.png", (0.50, 0.40), screen, screen_width, screen_height)    
-    thirty_secs_button = Button("01_30secs.png", "02_30secs.png", "03_30secs.png", (0.50, 0.50), screen, screen_width, screen_height)
-    forty_secs_button = Button("01_40secs.png", "02_40secs.png", "03_40secs.png", (0.50, 0.60), screen, screen_width, screen_height)
+    ten_secs_button = Button("01_10secs.png", "02_10secs.png", "03_10secs.png", (0.50, 0.35), screen, screen_width, screen_height)
+    twenty_secs_button = Button("01_20secs.png", "02_20secs.png", "03_20secs.png", (0.50, 0.45), screen, screen_width, screen_height)    
+    thirty_secs_button = Button("01_30secs.png", "02_30secs.png", "03_30secs.png", (0.50, 0.55), screen, screen_width, screen_height)
+    forty_secs_button = Button("01_40secs.png", "02_40secs.png", "03_40secs.png", (0.50, 0.65), screen, screen_width, screen_height)
 
     while not timer_selected : 
 
@@ -276,10 +277,14 @@ def timebound_mode(screen, screen_width, screen_height) :
             screen.blit(kate_img[1], (kate_x, kate_y))
             screen.blit(kate_db, (db_x, db_y))
             pygame.display.flip()
-            tts(screen, "Pick a time limit: 20, 30 or 40 seconds?", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+            tts(screen, "Pick a time limit: 10, 20, 30 or 40 seconds?", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
             timer_prompt = False
 
-        if twenty_secs_button.draw() : 
+        if ten_secs_button.draw() : 
+            countdown_secs = 10 
+            timer_selected = True
+        
+        elif twenty_secs_button.draw() : 
             countdown_secs = 20
             timer_selected = True
         
