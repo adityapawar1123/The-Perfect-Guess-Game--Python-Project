@@ -126,7 +126,7 @@ def game_mode() :
       
       elif timebound_button.draw() : 
          from modes.timebound_mode.timebound_mode import timebound_mode
-         timebound_mode()
+         timebound_mode(screen, screen_width, screen_height)
       
       elif gaslight_button.draw() : 
          from modes.gaslight_mode.gaslight_mode import gaslight_mode

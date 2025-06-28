@@ -298,6 +298,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
             while True : 
                 screen.blit(bkg, (0,0))
+                screen.blit(kate_img[0], (kate_x, kate_y))
                 screen.blit(input_box, (box_x, box_y))
                 back_confirmation = back_confirmation_font.render(f"WANNA GO BACK TO MENU?", True, (40, 209, 52, 255))
                 screen.blit(back_confirmation, (text_x, text_y + text_y*0.02))
@@ -305,7 +306,9 @@ def normal_mode(screen, screen_width, screen_height) :
                 
                 if yes_button.draw() : 
                     pygame.mixer.music.fadeout(2000)
-                    
+                    screen.blit(bkg, (0,0))
+                    screen.blit(input_box, (box_x, box_y))
+                    screen.blit(back_confirmation, (text_x, text_y + text_y*0.02))
                     screen.blit(kate_img[1], (kate_x, kate_y))
                     screen.blit(kate_db, (db_x, db_y))
                     pygame.display.flip()

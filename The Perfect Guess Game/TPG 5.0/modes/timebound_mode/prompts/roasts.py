@@ -14,8 +14,8 @@ def invalid_input_roasts() :
     "At this point, even my random number generator has more logic than you."]
     return random.choice(invalid_input_roasts)
 
-def no_loop_roasts() :  
-    no_loop_roasts = [
+def game_quit() :  
+    game_quit = [
     "Aww, quitting already? Guess you were never really up for the challenge.",
     "No more guesses? Guess you couldn't handle the heat!",
     "You're bailing out? Weak, my friend. Weak.",
@@ -27,4 +27,4 @@ def no_loop_roasts() :
     "Giving up? Pfft, no guts, no glory.",
     "Alright, alright, you win... at quitting.",
     "I see how it is... You had your chance and bailed. Classic."]
-    return  random.choice(no_loop_roasts)
+    return  random.choice(game_quit)
