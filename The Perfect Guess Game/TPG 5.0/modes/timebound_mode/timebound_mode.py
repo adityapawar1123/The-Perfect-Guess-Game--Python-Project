@@ -58,10 +58,10 @@ def timebound_mode(screen, screen_width, screen_height) :
                 countdown_secs['remaining_time'] -= 1
                 pygame.mixer.Sound.play(clock_ticking_sound_effect)
                     
-            if countdown_secs['remaining_time'] == 10 : 
-                pygame.mixer.music.stop()
-                music_thread(audio.timebound_mode_music, "timebound_10_sec_left.wav")
-                continue
+                if countdown_secs['remaining_time'] == 10 : 
+                    pygame.mixer.music.stop()
+                    music_thread(audio.timebound_mode_music, "timebound_10_sec_left.wav")
+                    continue
     
     
     db_font_path = os.path.join(tpg_5, "UI", "pixellari.ttf")
@@ -312,6 +312,7 @@ def timebound_mode(screen, screen_width, screen_height) :
 
     music_thread(audio.timebound_mode_music, "timebound_mode.wav")
     game_over = False 
+    input_off = False
     kate = kate_img[0]
     guessNo = 0 
     
@@ -354,6 +355,7 @@ def timebound_mode(screen, screen_width, screen_height) :
         
         try : 
             if shared_state["remaining_time"] <= 0 : 
+                input_off = True
                 raise TimeoutError #So it comes to hard stop no matter wht the player is doing at the time
         
         except TimeoutError : 
@@ -376,7 +378,7 @@ def timebound_mode(screen, screen_width, screen_height) :
             screen.blit(bkg, (0,0))
             screen.blit(input_box, (box_x, box_y))
             screen.blit(timer_box, (timer_x, timer_y))
-            countdown_secs_text = countdown_secs_text_font.render(f"00:{timer_padding}{shared_state['remaining_time']}", True, (136, 8, 8))
+            countdown_secs_text = countdown_secs_text_font.render(f"00:00", True, (136, 8, 8))
             screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
             screen.blit(kate_img[1], (kate_x, kate_y))
             screen.blit(kate_db, (db_x, db_y))
@@ -402,6 +404,7 @@ def timebound_mode(screen, screen_width, screen_height) :
         if back_button.draw() : 
 
             shared_state['pause_timer'] = True 
+            input_off = True
             while True : 
                 screen.blit(bkg, (0,0))
                 screen.blit(input_box, (box_x, box_y))
@@ -425,6 +428,7 @@ def timebound_mode(screen, screen_width, screen_height) :
                 
                 if no_button.draw() : 
                     shared_state['pause_timer'] = False
+                    input_off = False
                     break #breaks the inner loop and goes back to game
 
                 for event in pygame.event.get() : 
@@ -444,82 +448,84 @@ def timebound_mode(screen, screen_width, screen_height) :
             if event.type == pygame.QUIT : 
                 pygame.quit()
                 quit()
-
-            if event.type == pygame.KEYDOWN : 
-
-                if event.key == pygame.K_RETURN:
-
-                    if user_text != '' : 
-                        try : 
-                            user_text = int(user_text)
-                            
-                            if user_text > n : 
-                                
-                                screen.blit(kate_img[1], (kate_x, kate_y))
-                                screen.blit(kate_db, (db_x, db_y))
-                                pygame.display.flip()
-                                
-                                tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-                                guessNo += 1
-
-                            elif user_text < n : 
-                                
-                                screen.blit(kate_img[1], (kate_x, kate_y))
-                                screen.blit(kate_db, (db_x, db_y))
-                                pygame.display.flip()
-                                
-                                tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-                                guessNo += 1
-
-                            elif user_text == n : 
-
-                                shared_state["pause_timer"] = True
-                                sound_effect_channel = pygame.mixer.Channel(1)
-                                win_sound_effect_path = os.path.join(tpg_5, "audio", "sound_effect", "win_sound_effect.mp3")
-                                win_sound_effect = pygame.mixer.Sound(win_sound_effect_path)
-                                sound_effect_channel.set_volume(1) # volume on 100%
-                                
-                                pygame.mixer.music.fadeout(1000)
-                                sound_effect_channel.play(win_sound_effect)
-                                while sound_effect_channel.get_busy() : 
-                                    pygame.time.wait(10) #Checks every 10sec if channel is still busy
-
-                                guessNo += 1
-                                
-                                screen.blit(kate_img[1], (kate_x, kate_y))
-                                screen.blit(kate_db, (db_x, db_y))
-
-                                pygame.display.flip()
-
-                                tts(screen, win_prompts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-                                
-                                music_thread(audio.menu_music, "menu_music.wav")
-                                game_over = True
-                        
-                        
-                        except ValueError : 
-
-                            pygame.mixer.music.pause()
-
-                            screen.blit(kate_img[1], (kate_x, kate_y))
-                            screen.blit(kate_db, (db_x, db_y))
-                            pygame.display.flip()
-                                
-                            tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-                            
-                            pygame.mixer.music.unpause()
-                    
-                    user_text = ""       # clear after enter, or break loop, etc.
-                
-                elif event.key == pygame.K_BACKSPACE:
-                    user_text = user_text[:-1]   # remove last character
-                else:
-                    new_text = user_text + event.unicode 
-                    new_surf = input_font.render(new_text, True, (40, 209, 52, 255))
-                    # only accept if it fits within the box (minus padding)
-                    if new_surf.get_width() <= (box_w - 2*padding_x):
-                        user_text = new_text
             
+            if input_off == False : 
+
+                if event.type == pygame.KEYDOWN : 
+
+                    if event.key == pygame.K_RETURN:
+
+                        if user_text != '' : 
+                            try : 
+                                user_text = int(user_text)
+                                
+                                if user_text > n : 
+                                    
+                                    screen.blit(kate_img[1], (kate_x, kate_y))
+                                    screen.blit(kate_db, (db_x, db_y))
+                                    pygame.display.flip()
+                                    
+                                    tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    guessNo += 1
+
+                                elif user_text < n : 
+                                    
+                                    screen.blit(kate_img[1], (kate_x, kate_y))
+                                    screen.blit(kate_db, (db_x, db_y))
+                                    pygame.display.flip()
+                                    
+                                    tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    guessNo += 1
+
+                                elif user_text == n : 
+
+                                    shared_state["pause_timer"] = True
+                                    sound_effect_channel = pygame.mixer.Channel(1)
+                                    win_sound_effect_path = os.path.join(tpg_5, "audio", "sound_effect", "win_sound_effect.mp3")
+                                    win_sound_effect = pygame.mixer.Sound(win_sound_effect_path)
+                                    sound_effect_channel.set_volume(1) # volume on 100%
+                                    
+                                    pygame.mixer.music.fadeout(1000)
+                                    sound_effect_channel.play(win_sound_effect)
+                                    while sound_effect_channel.get_busy() : 
+                                        pygame.time.wait(10) #Checks every 10sec if channel is still busy
+
+                                    guessNo += 1
+                                    
+                                    screen.blit(kate_img[1], (kate_x, kate_y))
+                                    screen.blit(kate_db, (db_x, db_y))
+
+                                    pygame.display.flip()
+
+                                    tts(screen, win_prompts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    
+                                    music_thread(audio.menu_music, "menu_music.wav")
+                                    game_over = True
+                            
+                            
+                            except ValueError : 
+
+                                pygame.mixer.music.pause()
+
+                                screen.blit(kate_img[1], (kate_x, kate_y))
+                                screen.blit(kate_db, (db_x, db_y))
+                                pygame.display.flip()
+                                    
+                                tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                
+                                pygame.mixer.music.unpause()
+                        
+                        user_text = ""       # clear after enter, or break loop, etc.
+                    
+                    elif event.key == pygame.K_BACKSPACE:
+                        user_text = user_text[:-1]   # remove last character
+                    else:
+                        new_text = user_text + event.unicode 
+                        new_surf = input_font.render(new_text, True, (40, 209, 52, 255))
+                        # only accept if it fits within the box (minus padding)
+                        if new_surf.get_width() <= (box_w - 2*padding_x):
+                            user_text = new_text
+                
         text_surface = input_font.render(user_text, True, (40, 209, 52, 255))
         
         text_w = text_surface.get_width()
@@ -599,9 +605,11 @@ def timebound_mode(screen, screen_width, screen_height) :
         screen.blit(input_box, (box_x, box_y))
         
         current_score = scoreboard_font.render(f"ATTEMPTS TAKEN : {guessNo}", True, (40, 209, 52, 255))
-        remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']+1}s", True, (40, 209, 52, 255))
+        if shared_state["remaining_time"] != 0 : 
+            remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']+1}s", True, (40, 209, 52, 255))
+        else : 
+            remaining_time = scoreboard_font.render(f"TIME REMAINING : 0s", True, (40, 209, 52, 255))
         screen.blit(remaining_time, (text_x, text_y + text_h + (text_h*0.20)))
-
         screen.blit(current_score, (text_x, text_y))
 
 
@@ -611,7 +619,6 @@ def timebound_mode(screen, screen_width, screen_height) :
             screen.blit(voice_db, (voice_db_x, voice_db_y))
             
             current_score = scoreboard_font.render(f"ATTEMPTS TAKEN : {guessNo}", True, (40, 209, 52, 255))
-            remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']+1}s", True, (40, 209, 52, 255))
             screen.blit(remaining_time, (text_x, text_y + text_h + (text_h*0.20)))
             screen.blit(current_score, (text_x, text_y))
 
@@ -640,7 +647,7 @@ def timebound_mode(screen, screen_width, screen_height) :
             
             screen.blit(input_box, (box_x, box_y))
             current_score = scoreboard_font.render(f"ATTEMPTS TAKEN : {guessNo}", True, (40, 209, 52, 255))
-            remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']+1}s", True, (40, 209, 52, 255))
+            
             screen.blit(remaining_time, (text_x, text_y + text_h + (text_h*0.20)))
             screen.blit(current_score, (text_x, text_y))
 

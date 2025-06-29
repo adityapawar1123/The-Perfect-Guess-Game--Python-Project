@@ -251,6 +251,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
 
     game_over = False 
+    input_off = False 
     kate = kate_img[0]
     guessNo = 0 
     
@@ -296,6 +297,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
         if back_button.draw() : 
 
+            input_off = True 
             while True : 
                 screen.blit(bkg, (0,0))
                 screen.blit(kate_img[0], (kate_x, kate_y))
@@ -319,6 +321,7 @@ def normal_mode(screen, screen_width, screen_height) :
                     return # Exits normal game mode, instead of starting the score-board loop
                 
                 if no_button.draw() : 
+                    input_off = False 
                     break #breaks the inner loop and goes back to game
 
                 for event in pygame.event.get() : 
@@ -338,112 +341,114 @@ def normal_mode(screen, screen_width, screen_height) :
             if event.type == pygame.QUIT : 
                 pygame.quit()
                 quit()
+            
+            if input_off == False : 
 
-            if event.type == pygame.KEYDOWN : 
+                if event.type == pygame.KEYDOWN : 
 
-                if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_RETURN:
 
-                    if user_text != '' : 
-                        try : 
-                            user_text = int(user_text)
+                        if user_text != '' : 
+                            try : 
+                                user_text = int(user_text)
+                                
+                                if user_text > n : 
+                                    
+                                    screen.blit(kate_img[1], (kate_x, kate_y))
+                                    screen.blit(kate_db, (db_x, db_y))
+                                    pygame.display.flip()
+                                    
+                                    tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    guessNo += 1
+
+                                elif user_text < n : 
+                                    
+                                    screen.blit(kate_img[1], (kate_x, kate_y))
+                                    screen.blit(kate_db, (db_x, db_y))
+                                    pygame.display.flip()
+                                    
+                                    tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    guessNo += 1
+
+                                elif user_text == n : 
+                                    
+                                    sound_effect_channel = pygame.mixer.Channel(1)
+                                    win_sound_effect_path = os.path.join(tpg_5, "audio", "sound_effect", "win_sound_effect.mp3")
+                                    win_sound_effect = pygame.mixer.Sound(win_sound_effect_path)
+                                    sound_effect_channel.set_volume(1) # volume on 100%
+                                    
+                                    pygame.mixer.music.fadeout(1000)
+                                    sound_effect_channel.play(win_sound_effect)
+                                    while sound_effect_channel.get_busy() : 
+                                        pygame.time.wait(10) #Checks every 10sec if channel is still busy
+
+                                    if difficulty == "easy" : 
+                                        if guessNo == 1 : 
+                                            win_prompt = first_guess_prompts()
+                                        elif 2 <= guessNo < 3 : 
+                                            win_prompt = under4_guess_prompts(guessNo)
+                                        elif 3 <= guessNo <= 5 : 
+                                            win_prompt = mid_guess_prompts()
+                                        else : 
+                                            win_prompt = slow_guess_roasts()
+                                    
+                                    elif difficulty == "medium" : 
+                                        if guessNo == 1 : 
+                                            win_prompt = first_guess_prompts()
+                                        elif 2 <= guessNo < 4 : 
+                                            win_prompt = under4_guess_prompts(guessNo)
+                                        elif 4 <= guessNo <= 7 : 
+                                            win_prompt = mid_guess_prompts()
+                                        else : 
+                                            win_prompt = slow_guess_roasts()
+                                    
+                                    elif difficulty == "hard" : 
+                                        if guessNo == 1 : 
+                                            win_prompt = first_guess_prompts()
+                                        elif 2 <= guessNo < 6 : 
+                                            win_prompt = under4_guess_prompts(guessNo)
+                                        elif 6 <= guessNo <= 8 : 
+                                            win_prompt = mid_guess_prompts()
+                                        else : 
+                                            win_prompt = slow_guess_roasts()
+                                    
+                                    guessNo += 1
+                                    
+                                    screen.blit(kate_img[1], (kate_x, kate_y))
+                                    screen.blit(kate_db, (db_x, db_y))
+
+                                    screen.blit(attempt_box, (attempt_box_x, attempt_box_y))
+                                    attempt_text = attempt_text_font.render(f"ATTEMPTS : {guessNo}", True, (40, 209, 52, 255))
+                                    screen.blit(attempt_text, (attempt_box_x + (attempt_box_x*0.20), attempt_box_y + (attempt_box_y*0.20)))
+                                    pygame.display.flip()
+
+                                    tts(screen, win_prompt, int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    
+                                    music_thread(audio.menu_music, "menu_music.wav")
+                                    game_over = True
                             
-                            if user_text > n : 
-                                
+                            except ValueError : 
+
+                                pygame.mixer.music.pause()
+
                                 screen.blit(kate_img[1], (kate_x, kate_y))
                                 screen.blit(kate_db, (db_x, db_y))
                                 pygame.display.flip()
+                                    
+                                tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                 
-                                tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-                                guessNo += 1
-
-                            elif user_text < n : 
-                                
-                                screen.blit(kate_img[1], (kate_x, kate_y))
-                                screen.blit(kate_db, (db_x, db_y))
-                                pygame.display.flip()
-                                
-                                tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-                                guessNo += 1
-
-                            elif user_text == n : 
-                                
-                                sound_effect_channel = pygame.mixer.Channel(1)
-                                win_sound_effect_path = os.path.join(tpg_5, "audio", "sound_effect", "win_sound_effect.mp3")
-                                win_sound_effect = pygame.mixer.Sound(win_sound_effect_path)
-                                sound_effect_channel.set_volume(1) # volume on 100%
-                                
-                                pygame.mixer.music.fadeout(1000)
-                                sound_effect_channel.play(win_sound_effect)
-                                while sound_effect_channel.get_busy() : 
-                                    pygame.time.wait(10) #Checks every 10sec if channel is still busy
-
-                                if difficulty == "easy" : 
-                                    if guessNo == 1 : 
-                                        win_prompt = first_guess_prompts()
-                                    elif 2 <= guessNo < 3 : 
-                                        win_prompt = under4_guess_prompts(guessNo)
-                                    elif 3 <= guessNo <= 5 : 
-                                        win_prompt = mid_guess_prompts()
-                                    else : 
-                                        win_prompt = slow_guess_roasts()
-                                
-                                elif difficulty == "medium" : 
-                                    if guessNo == 1 : 
-                                        win_prompt = first_guess_prompts()
-                                    elif 2 <= guessNo < 4 : 
-                                        win_prompt = under4_guess_prompts(guessNo)
-                                    elif 4 <= guessNo <= 7 : 
-                                        win_prompt = mid_guess_prompts()
-                                    else : 
-                                        win_prompt = slow_guess_roasts()
-                                
-                                elif difficulty == "hard" : 
-                                    if guessNo == 1 : 
-                                        win_prompt = first_guess_prompts()
-                                    elif 2 <= guessNo < 6 : 
-                                        win_prompt = under4_guess_prompts(guessNo)
-                                    elif 6 <= guessNo <= 8 : 
-                                        win_prompt = mid_guess_prompts()
-                                    else : 
-                                        win_prompt = slow_guess_roasts()
-                                
-                                guessNo += 1
-                                
-                                screen.blit(kate_img[1], (kate_x, kate_y))
-                                screen.blit(kate_db, (db_x, db_y))
-
-                                screen.blit(attempt_box, (attempt_box_x, attempt_box_y))
-                                attempt_text = attempt_text_font.render(f"ATTEMPTS : {guessNo}", True, (40, 209, 52, 255))
-                                screen.blit(attempt_text, (attempt_box_x + (attempt_box_x*0.20), attempt_box_y + (attempt_box_y*0.20)))
-                                pygame.display.flip()
-
-                                tts(screen, win_prompt, int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-                                
-                                music_thread(audio.menu_music, "menu_music.wav")
-                                game_over = True
+                                pygame.mixer.music.unpause()
                         
-                        except ValueError : 
-
-                            pygame.mixer.music.pause()
-
-                            screen.blit(kate_img[1], (kate_x, kate_y))
-                            screen.blit(kate_db, (db_x, db_y))
-                            pygame.display.flip()
-                                
-                            tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-                            
-                            pygame.mixer.music.unpause()
+                        user_text = ""       # clear after enter, or break loop, etc.
                     
-                    user_text = ""       # clear after enter, or break loop, etc.
-                
-                elif event.key == pygame.K_BACKSPACE:
-                    user_text = user_text[:-1]   # remove last character
-                else:
-                    new_text = user_text + event.unicode 
-                    new_surf = input_font.render(new_text, True, (40, 209, 52, 255))
-                    # only accept if it fits within the box (minus padding)
-                    if new_surf.get_width() <= (box_w - 2*padding_x):
-                        user_text = new_text
+                    elif event.key == pygame.K_BACKSPACE:
+                        user_text = user_text[:-1]   # remove last character
+                    else:
+                        new_text = user_text + event.unicode 
+                        new_surf = input_font.render(new_text, True, (40, 209, 52, 255))
+                        # only accept if it fits within the box (minus padding)
+                        if new_surf.get_width() <= (box_w - 2*padding_x):
+                            user_text = new_text
             
         text_surface = input_font.render(user_text, True, (40, 209, 52, 255))
         
