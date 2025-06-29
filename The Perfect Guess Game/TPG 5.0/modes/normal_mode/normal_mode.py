@@ -40,7 +40,7 @@ def normal_mode(screen, screen_width, screen_height) :
     def voiceline_thread(func) : 
         thread = threading.Thread(target=func, daemon=False)
         thread.start()
-
+    
     
     path = os.path.dirname(os.path.abspath(__file__))
     mode_path = os.path.dirname(path)
@@ -315,6 +315,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
                     tts(screen, game_quit(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                     music_thread(audio.menu_music, "menu_music.wav")
+                    
                     return # Exits normal game mode, instead of starting the score-board loop
                 
                 if no_button.draw() : 
@@ -379,9 +380,9 @@ def normal_mode(screen, screen_width, screen_height) :
                                 if difficulty == "easy" : 
                                     if guessNo == 1 : 
                                         win_prompt = first_guess_prompts()
-                                    elif 2 <= guessNo < 4 : 
+                                    elif 2 <= guessNo < 3 : 
                                         win_prompt = under4_guess_prompts(guessNo)
-                                    elif 4 <= guessNo <= 6 : 
+                                    elif 3 <= guessNo <= 5 : 
                                         win_prompt = mid_guess_prompts()
                                     else : 
                                         win_prompt = slow_guess_roasts()
@@ -389,9 +390,9 @@ def normal_mode(screen, screen_width, screen_height) :
                                 elif difficulty == "medium" : 
                                     if guessNo == 1 : 
                                         win_prompt = first_guess_prompts()
-                                    elif 2 <= guessNo < 6 : 
+                                    elif 2 <= guessNo < 4 : 
                                         win_prompt = under4_guess_prompts(guessNo)
-                                    elif 6 <= guessNo <= 8 : 
+                                    elif 4 <= guessNo <= 7 : 
                                         win_prompt = mid_guess_prompts()
                                     else : 
                                         win_prompt = slow_guess_roasts()
@@ -399,9 +400,9 @@ def normal_mode(screen, screen_width, screen_height) :
                                 elif difficulty == "hard" : 
                                     if guessNo == 1 : 
                                         win_prompt = first_guess_prompts()
-                                    elif 2 <= guessNo < 8 : 
+                                    elif 2 <= guessNo < 6 : 
                                         win_prompt = under4_guess_prompts(guessNo)
-                                    elif 8 <= guessNo <= 9 : 
+                                    elif 6 <= guessNo <= 8 : 
                                         win_prompt = mid_guess_prompts()
                                     else : 
                                         win_prompt = slow_guess_roasts()
@@ -607,6 +608,7 @@ def normal_mode(screen, screen_width, screen_height) :
         
         if continue_button.draw() : 
             scoreboard_exit = True 
+            
         
         for event in pygame.event.get() : 
 

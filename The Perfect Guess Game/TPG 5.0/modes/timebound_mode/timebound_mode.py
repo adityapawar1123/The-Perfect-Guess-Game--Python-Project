@@ -591,7 +591,7 @@ def timebound_mode(screen, screen_width, screen_height) :
         screen.blit(input_box, (box_x, box_y))
         
         current_score = scoreboard_font.render(f"ATTEMPTS TAKEN : {guessNo}", True, (40, 209, 52, 255))
-        remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']}s", True, (40, 209, 52, 255))
+        remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']+1}s", True, (40, 209, 52, 255))
         screen.blit(remaining_time, (text_x, text_y + text_h + (text_h*0.20)))
 
         screen.blit(current_score, (text_x, text_y))
@@ -603,7 +603,7 @@ def timebound_mode(screen, screen_width, screen_height) :
             screen.blit(voice_db, (voice_db_x, voice_db_y))
             
             current_score = scoreboard_font.render(f"ATTEMPTS TAKEN : {guessNo}", True, (40, 209, 52, 255))
-            remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']}s", True, (40, 209, 52, 255))
+            remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']+1}s", True, (40, 209, 52, 255))
             screen.blit(remaining_time, (text_x, text_y + text_h + (text_h*0.20)))
             screen.blit(current_score, (text_x, text_y))
 
@@ -632,7 +632,7 @@ def timebound_mode(screen, screen_width, screen_height) :
             
             screen.blit(input_box, (box_x, box_y))
             current_score = scoreboard_font.render(f"ATTEMPTS TAKEN : {guessNo}", True, (40, 209, 52, 255))
-            remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']}s", True, (40, 209, 52, 255))
+            remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']+1}s", True, (40, 209, 52, 255))
             screen.blit(remaining_time, (text_x, text_y + text_h + (text_h*0.20)))
             screen.blit(current_score, (text_x, text_y))
 
@@ -643,6 +643,8 @@ def timebound_mode(screen, screen_width, screen_height) :
         
         if continue_button.draw() : 
             scoreboard_exit = True 
+            
+            
         
         for event in pygame.event.get() : 
 
