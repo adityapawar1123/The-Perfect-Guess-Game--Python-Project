@@ -34,7 +34,7 @@ def timebound_mode_music(file, duration=-1, fade_in=2250) :
 
     path = os.path.join(folder, "music", "timebound_mode", file)
     pygame.mixer.music.load(path)
-    pygame.mixer.music.set_volume(0.85)
+    pygame.mixer.music.set_volume(1.2)
     pygame.mixer.music.play(duration, fade_ms=fade_in)
 
 def gaslight_mode_music(file, duration=-1, fade_in=2250) : 

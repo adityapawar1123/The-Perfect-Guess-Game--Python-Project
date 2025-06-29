@@ -26,6 +26,9 @@ def timebound_mode(screen, screen_width, screen_height) :
 
     set_female_voice()
 
+    path = os.path.dirname(os.path.abspath(__file__))
+    mode_path = os.path.dirname(path)
+    tpg_5 = os.path.dirname(mode_path)
     
     from audio import audio 
     def music_thread(func, file, duration=-1) : #by default duration stays on -1 i.e. runs song on infinite loop
@@ -41,6 +44,8 @@ def timebound_mode(screen, screen_width, screen_height) :
         thread = threading.Thread(target=func, daemon=False)
         thread.start()
 
+    clock_ticking_sound_effect = pygame.mixer.Sound(os.path.join(tpg_5, "audio", "sound_effect", "clock_ticking.wav"))
+    clock_ticking_sound_effect.set_volume(0.3)
     def countdown(countdown_secs) :
         while countdown_secs['remaining_time'] > 0 : 
             
@@ -51,15 +56,13 @@ def timebound_mode(screen, screen_width, screen_height) :
             else : 
                 time.sleep(1)
                 countdown_secs['remaining_time'] -= 1
+                pygame.mixer.Sound.play(clock_ticking_sound_effect)
                     
             if countdown_secs['remaining_time'] == 10 : 
                 pygame.mixer.music.stop()
                 music_thread(audio.timebound_mode_music, "timebound_10_sec_left.wav")
                 continue
     
-    path = os.path.dirname(os.path.abspath(__file__))
-    mode_path = os.path.dirname(path)
-    tpg_5 = os.path.dirname(mode_path)
     
     db_font_path = os.path.join(tpg_5, "UI", "pixellari.ttf")
     input_font_path = os.path.join(tpg_5, "UI", "vcr.ttf") 
@@ -370,6 +373,11 @@ def timebound_mode(screen, screen_width, screen_height) :
             while sound_effect_channel.get_busy() : 
                 pygame.time.wait(10) #Checks every 10sec if channel is still busy
                             
+            screen.blit(bkg, (0,0))
+            screen.blit(input_box, (box_x, box_y))
+            screen.blit(timer_box, (timer_x, timer_y))
+            countdown_secs_text = countdown_secs_text_font.render(f"00:{timer_padding}{shared_state['remaining_time']}", True, (136, 8, 8))
+            screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
             screen.blit(kate_img[1], (kate_x, kate_y))
             screen.blit(kate_db, (db_x, db_y))
 
