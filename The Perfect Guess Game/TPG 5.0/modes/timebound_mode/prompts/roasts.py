@@ -26,5 +26,6 @@ def game_quit() :
     "C'mon, you can't quit now! I was just starting to have fun roasting you.",
     "Giving up? Pfft, no guts, no glory.",
     "Alright, alright, you win... at quitting.",
-    "I see how it is... You had your chance and bailed. Classic."]
+    "I see how it is... You had your chance and bailed. Classic.", 
+    "Awwww you quitting already? Could've sworn you had some braincells left."]
     return  random.choice(game_quit)

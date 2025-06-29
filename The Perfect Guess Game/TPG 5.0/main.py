@@ -211,7 +211,9 @@ def game_mode() :
       
       elif gaslight_button.draw() : 
          from modes.gaslight_mode.gaslight_mode import gaslight_mode
-         gaslight_mode()
+         fade(screen, fade_in=True)
+         gaslight_mode(screen, screen_width, screen_height)
+         fade(screen, fade_in=True)
       
       elif endgame_condition == "unlock" : 
          if endgame_button.draw() : 
@@ -222,6 +224,7 @@ def game_mode() :
          if endgame_played != "lock" : 
             if secret_button.draw() : 
                pygame.mixer.music.pause()
+               pygame.mixer.Channel(1).set_volume(0.1)
                pygame.mixer.Channel(1).play(secret_button_sound_effect)
                while pygame.mixer.Channel(1).get_busy() : 
                   pygame.time.wait(10)
