@@ -268,11 +268,9 @@ def endgame_mode(screen, screen_width, screen_height) :
 
         if attempts_left == 0 : 
             endgame_result = "lost"
-            pygame.mixer.music.stop()
-            sound_effect_thread(audio.sound_effects, "lose_sound_effect.mp3")
             game_over = True
 
-        if attempts_left <= 10 : 
+        if attempts_left <= 5 : 
             attempt_text_color = (136, 8, 8)
         else : 
             attempt_text_color = (40, 209, 52, 255)
