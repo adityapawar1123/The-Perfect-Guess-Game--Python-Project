@@ -321,7 +321,8 @@ def normal_mode(screen, screen_width, screen_height) :
                     return # Exits normal game mode, instead of starting the score-board loop
                 
                 if no_button.draw() : 
-                    input_off = False 
+                    input_off = False
+                    pygame.event.clear() 
                     break #breaks the inner loop and goes back to game
 
                 for event in pygame.event.get() : 
@@ -350,6 +351,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
                         if user_text != '' : 
                             try : 
+                                input_off = True
                                 user_text = int(user_text)
                                 
                                 if user_text > n : 
@@ -438,6 +440,10 @@ def normal_mode(screen, screen_width, screen_height) :
                                 tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                 
                                 pygame.mixer.music.unpause()
+                            
+                            finally : 
+                                input_off = False 
+                                pygame.event.clear() #clears the event queue
                         
                         user_text = ""       # clear after enter, or break loop, etc.
                     

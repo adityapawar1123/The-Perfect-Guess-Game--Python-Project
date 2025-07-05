@@ -218,7 +218,9 @@ def game_mode() :
       elif endgame_condition == "unlock" : 
          if endgame_button.draw() : 
             from modes.endgame_mode.endgame_mode import endgame_mode 
-            endgame_mode()
+            fade(screen, fade_in=True)
+            endgame_mode(screen, screen_width, screen_height)
+            fade(screen, fade_in=True)
       
       elif endgame_condition != "unlock" : 
          if endgame_played != "lock" : 

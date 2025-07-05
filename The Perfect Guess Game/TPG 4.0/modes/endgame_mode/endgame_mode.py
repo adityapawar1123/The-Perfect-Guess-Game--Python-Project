@@ -29,6 +29,7 @@ def endgame_mode() :
     def only_tts(text) :
         engine.say(text)
         engine.runAndWait() 
+    
 
     file_path = os.path.abspath(__file__) #Gives absolute path of our current file
     dir_path = os.path.dirname(file_path) #Gives absolute path of the current folder in which this file is present
@@ -60,7 +61,6 @@ def endgame_mode() :
         thread.start()
     #Seperating these functn(s) to prevent audio overlapping
 
-    
     from audio import voicelines
     voicelines.endgame_kate_intro()   #Starts the sad/psycho Kate intro
     
@@ -78,7 +78,7 @@ def endgame_mode() :
     while True : 
         hints = random.choice(["\nGuess a higher number", "\nGuess a lower number"])
 
-        if attempts_left == 22 : 
+        if attempts_left == 22 and truth_serum_activate == False : 
             pygame.mixer.music.fadeout(1500)
             
             voicelines.endgame_jokingo_reveal()
@@ -86,7 +86,7 @@ def endgame_mode() :
             sound_effect_thread(audio.sound_effects, "new_highscore_sound_effect.mp3")  
             music_thread(audio.endgame_mode_music, "endgame_mode.wav")
 
-            print("💉 GAINED 7 TRUTH SERUMS 💉")
+            print(f"💉 GAINED {truth_serum} TRUTH SERUMS 💉")
             truth_serum_activate = True 
 
         elif attempts_left < 22 :
@@ -108,7 +108,7 @@ def endgame_mode() :
             break
 
         
-        elif truth_serum > 0 and truth_serum_activate == True and guessNo.lower().strip() in ["truth serum", "truth"] : 
+        elif truth_serum > 0 and truth_serum_activate == True and guessNo.lower().strip() in ["truth serum", "truth", "t"] : 
                 truth_serum -= 1
                 try : 
                     guessNo = int(input("\nGuess number (Kate won't lie) : "))
