@@ -3,3 +3,4 @@ endgame_hinter_unlocker.txt = ""
 endgame_hinter.txt = 2
 endgame_result.txt = ""
 endgame_unlock.txt = lock
+aftermath_counter.txt = ""

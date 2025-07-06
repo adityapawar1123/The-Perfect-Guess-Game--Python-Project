@@ -12,14 +12,7 @@ def set_female_voice():
             break
 
 set_female_voice()
-def tts(text) : 
-   engine.say(text)
-   print(text)
-   engine.runAndWait()
 
-def only_tts(text) :
-   engine.say(text)
-   engine.runAndWait() 
 
 def fade(screen, fade_in=True, speed=10, color=(0, 0, 0)):
     fade_surface = pygame.Surface((screen.get_width(), screen.get_height())) #This creates a brand new surface the size of the screen
@@ -41,8 +34,12 @@ def fade(screen, fade_in=True, speed=10, color=(0, 0, 0)):
 import os
 file_path = os.path.abspath(__file__) #Gives absolute path of main.py
 dir_path = os.path.dirname(file_path) #Gives absolute path of our folder in which main.py is present
+
 endgame_unlock_path = os.path.join(dir_path, "modes", "endgame_mode", "endgame_unlock.txt")
 endgame_hinter_unlocker_path = os.path.join(dir_path, "data", "endgame_hinter_unlocker.txt")
+endgame_result_path = os.path.join(dir_path, "modes", "endgame_mode", "endgame_result.txt")
+aftermath_counter_path = os.path.join(dir_path, "data", "aftermath_counter.txt")
+
 # Set the environment variable BEFORE importing pygame
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
@@ -52,8 +49,6 @@ import threading
 def music_thread(func, file, duration=-1) :  #duration -1 default i.e. on infinite loop
    thread = threading.Thread(target=func, args=(file, duration), daemon=True)
    thread.start()
-
-music_thread(audio.menu_music, "menu_music.wav") #Runs menu music on an infinite loop 
 
 
 from data.prompts import common_prompts
@@ -367,4 +362,45 @@ def menu() :
       clock.tick(fps)
 
 
+with open(endgame_result_path) as f : 
+   endgame_result = f.read()
+with open(aftermath_counter_path) as f : 
+   aftermath_counter = f.read()
+
+if endgame_result == "lost" and aftermath_counter == "" : 
+
+   with open(aftermath_counter_path, "w") as f : 
+      f.write("lock") #So that even after losing Endgame, the aftermath screen doesn't occur everytime player opens the game
+
+   font_size = 0.025
+   aftermath_screen = True
+
+   pygame.font.init()
+   sound_effect_channel = pygame.mixer.Channel(1)
+   cinematic_thud = pygame.mixer.Sound(os.path.join(dir_path, "audio", "sound_effect", "cinematic_thud_sound_effect.wav"))
+   sound_effect_channel.play(cinematic_thud)
+   while sound_effect_channel.get_busy() : 
+
+      aftermath_font = pygame.font.Font(os.path.join(dir_path, "UI", "pixellari.ttf"), int(screen_height*font_size))
+      
+      text = aftermath_font.render("The Aftermath", True, (255,255,255))
+      font_h = aftermath_font.get_height()
+      font_w = text.get_width()
+
+      screen.fill((0,0,0))
+      screen.blit(text, (screen_width//2 - font_w//2, screen_height//2 - font_h//2))
+
+      for event in pygame.event.get() : 
+         if event.type == pygame.QUIT : 
+            pygame.quit()
+            quit()
+
+      pygame.display.flip()
+      clock.tick(30)
+
+      if font_size <= 0.10 : 
+         font_size += 0.0015
+
+   
+music_thread(audio.menu_music, "menu_music.wav") #Runs menu music on an infinite loop 
 menu()
