@@ -3,16 +3,6 @@ import pyttsx3
 engine = pyttsx3.init()
 import time
 
-def set_female_voice():
-    voices = engine.getProperty('voices')
-    # Try setting the first available female voice (you might need to tweak the index)
-    for voice in voices:
-        if "zira" in voice.id.lower():  # Adjust as needed
-            engine.setProperty('voice', voice.id)
-            break
-
-set_female_voice()
-
 
 def fade(screen, fade_in=True, speed=10, color=(0, 0, 0)):
     fade_surface = pygame.Surface((screen.get_width(), screen.get_height())) #This creates a brand new surface the size of the screen

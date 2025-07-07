@@ -16,6 +16,15 @@ def normal_mode(screen, screen_width, screen_height) :
     import pyttsx3
     engine = pyttsx3.init()
 
+    path = os.path.dirname(os.path.abspath(__file__))
+    mode_path = os.path.dirname(path)
+    tpg_5 = os.path.dirname(mode_path)
+
+    with open(os.path.join(tpg_5, "modes", "endgame_mode", "endgame_result.txt")) as f : 
+        endgame_result = f.read()
+
+
+
     def set_female_voice():
         voices = engine.getProperty('voices')
         # Try setting the first available female voice (you might need to tweak the index)
@@ -23,8 +32,19 @@ def normal_mode(screen, screen_width, screen_height) :
             if "zira" in voice.id.lower():  # Adjust as needed
                 engine.setProperty('voice', voice.id)
                 break
+    
+    def set_male_voice():
+        voices = engine.getProperty('voices')
+        for voice in voices:
+            # On Windows, one of them is usually called “David” or has “male” in its name
+            if "david" in voice.id.lower() or "male" in voice.name.lower():
+                engine.setProperty('voice', voice.id)
+                return
 
-    set_female_voice()
+    if endgame_result != "lost" : 
+        set_female_voice()
+    else : 
+        set_male_voice() #AFTERMATH UPDATE
 
     
     from audio import audio 
@@ -42,9 +62,6 @@ def normal_mode(screen, screen_width, screen_height) :
         thread.start()
     
     
-    path = os.path.dirname(os.path.abspath(__file__))
-    mode_path = os.path.dirname(path)
-    tpg_5 = os.path.dirname(mode_path)
     
     db_font_path = os.path.join(tpg_5, "UI", "pixellari.ttf")
     input_font_path = os.path.join(tpg_5, "UI", "vcr.ttf") 
@@ -68,6 +85,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
     kate_db_path = os.path.join(tpg_5, "UI", "ui", "kate_db.png")
     voice_db_path = os.path.join(tpg_5, "UI", "ui", "voice_db.png")
+    jokingo_db_path = os.path.join(tpg_5, "UI", "ui", "jokingo_db.png")
 
     
     kate_db_raw = pygame.image.load(kate_db_path).convert_alpha()
@@ -76,6 +94,11 @@ def normal_mode(screen, screen_width, screen_height) :
     kate_db = pygame.transform.scale(kate_db_raw, (db_width, db_height))
     db_x = int((kate_x + kate_w) - kate_w*0.15) 
     db_y = (kate_y - (kate_y*0.05))  # push db toward bottom
+
+    jokingo_db_raw = pygame.image.load(jokingo_db_path).convert_alpha()
+    jokingo_db = pygame.transform.scale(jokingo_db_raw, (db_width, db_height))
+    jokingo_db_x = int(screen_width*0.075)
+    jokingo_db_y = int(screen_height*0.65)
     
 
     def tts(screen, text, font_size, color, pos, max_width=None) : 
@@ -176,75 +199,78 @@ def normal_mode(screen, screen_width, screen_height) :
 
         screen.blit(bkg, (0,0))
 
-        if (kate_talking == True) and (intro == True) : 
-            kate = kate_img[1]
-            screen.blit(kate, (kate_x, kate_y))
-            screen.blit(kate_db, (db_x, db_y))
-            pygame.display.flip()
+        if endgame_result != "lost" : 
+            if (kate_talking == True) and (intro == True) : 
+                kate = kate_img[1]
+                screen.blit(kate, (kate_x, kate_y))
+                screen.blit(kate_db, (db_x, db_y))
+                pygame.display.flip()
 
-            tts(screen, normal_mode_explain(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-            
-            screen.blit(kate_db, (db_x, db_y))
-            pygame.display.flip()
-            tts(screen, "Choose the difficulty!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                tts(screen, normal_mode_explain(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                
+                screen.blit(kate_db, (db_x, db_y))
+                pygame.display.flip()
+                tts(screen, "Choose the difficulty!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
 
-            kate_talking = False
-            intro = False  
+                kate_talking = False
+                intro = False  
         
         if easy_button.draw() : 
             difficulty = "easy"
 
-            kate = kate_img[1]
-            screen.blit(kate, (kate_x, kate_y))
-            screen.blit(kate_db, (db_x, db_y))
-            pygame.display.flip()
+            if endgame_result != "lost" :
+                kate = kate_img[1]
+                screen.blit(kate, (kate_x, kate_y))
+                screen.blit(kate_db, (db_x, db_y))
+                pygame.display.flip()
 
-            music_thread(audio.normal_mode_music, "normal_mode.wav")
-            tts(screen, "You have to guess a number between 1 and 100", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-            n = random.randint(1,100)
+                tts(screen, "You have to guess a number between 1 and 100", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
             
-
+            n = random.randint(1,100)
             difficulty_selected = True
 
         elif medium_button.draw() : 
             difficulty = "medium"
 
-            kate = kate_img[1]
-            screen.blit(kate, (kate_x, kate_y))
-            screen.blit(kate_db, (db_x, db_y))
-            pygame.display.flip()
+            if endgame_result != "lost" :
+                kate = kate_img[1]
+                screen.blit(kate, (kate_x, kate_y))
+                screen.blit(kate_db, (db_x, db_y))
+                pygame.display.flip()
 
-            music_thread(audio.normal_mode_music, "normal_mode.wav")
-            tts(screen, "You have to guess a number between 1 and 500", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-            n = random.randint(1,500)
+                tts(screen, "You have to guess a number between 1 and 500", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
             
+            n = random.randint(1,500)
             difficulty_selected = True
         
         elif hard_button.draw() : 
             difficulty = "hard"
 
-            kate = kate_img[1]
-            screen.blit(kate, (kate_x, kate_y))
-            screen.blit(kate_db, (db_x, db_y))
-            pygame.display.flip()
+            if endgame_result != "lost" :
+                kate = kate_img[1]
+                screen.blit(kate, (kate_x, kate_y))
+                screen.blit(kate_db, (db_x, db_y))
+                pygame.display.flip()
 
-            music_thread(audio.normal_mode_music, "normal_mode.wav")
-            tts(screen, "You have to guess a number between 1 and 1000", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                tts(screen, "You have to guess a number between 1 and 1000", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+
             n = random.randint(1,1000)
-
             difficulty_selected = True
         
         else : 
-            kate = kate_img[0]
-            screen.blit(kate, (kate_x, kate_y))
-            pygame.display.flip()
+
+            if endgame_result != "lost" :
+                kate = kate_img[0]
+                screen.blit(kate, (kate_x, kate_y))
+                pygame.display.flip()
 
         for event in pygame.event.get() : 
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
                 quit()
-        
+
+        pygame.display.flip()
         clock.tick(fps)
 
     
@@ -286,6 +312,7 @@ def normal_mode(screen, screen_width, screen_height) :
     no_button = Button("01_no.png", "02_no.png", "03_no.png", (0.56, 0.70), screen, screen_width, screen_height)
     back_confirmation_font = pygame.font.Font(input_font_path, int(screen_height*0.025))
 
+    music_thread(audio.normal_mode_music, "normal_mode.wav")
     while not game_over : 
         current = pygame.time.get_ticks()
 
@@ -300,7 +327,8 @@ def normal_mode(screen, screen_width, screen_height) :
             input_off = True 
             while True : 
                 screen.blit(bkg, (0,0))
-                screen.blit(kate_img[0], (kate_x, kate_y))
+                if endgame_result != "lost" :
+                    screen.blit(kate_img[0], (kate_x, kate_y))
                 screen.blit(input_box, (box_x, box_y))
                 back_confirmation = back_confirmation_font.render(f"WANNA GO BACK TO MENU?", True, (40, 209, 52, 255))
                 screen.blit(back_confirmation, (text_x, text_y + text_y*0.02))
@@ -311,13 +339,13 @@ def normal_mode(screen, screen_width, screen_height) :
                     screen.blit(bkg, (0,0))
                     screen.blit(input_box, (box_x, box_y))
                     screen.blit(back_confirmation, (text_x, text_y + text_y*0.02))
-                    screen.blit(kate_img[1], (kate_x, kate_y))
-                    screen.blit(kate_db, (db_x, db_y))
-                    pygame.display.flip()
-
-                    tts(screen, game_quit(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-                    music_thread(audio.menu_music, "menu_music.wav")
+                    if endgame_result != "lost" :
+                        screen.blit(kate_img[1], (kate_x, kate_y))
+                        screen.blit(kate_db, (db_x, db_y))
+                        tts(screen, game_quit(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                     
+                    music_thread(audio.menu_music, "menu_music.wav")
+                    pygame.display.flip()
                     return # Exits normal game mode, instead of starting the score-board loop
                 
                 if no_button.draw() : 
@@ -356,20 +384,28 @@ def normal_mode(screen, screen_width, screen_height) :
                                 
                                 if user_text > n : 
                                     
-                                    screen.blit(kate_img[1], (kate_x, kate_y))
-                                    screen.blit(kate_db, (db_x, db_y))
+                                    if endgame_result != "lost" :
+                                        screen.blit(kate_img[1], (kate_x, kate_y))
+                                        screen.blit(kate_db, (db_x, db_y))
+                                        tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    else : 
+                                        screen.blit(jokingo_db, (jokingo_db_x, jokingo_db_y))
+                                        tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (jokingo_db_x + jokingo_db_x*0.063 , jokingo_db_y + jokingo_db_y*0.09))
                                     pygame.display.flip()
                                     
-                                    tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                     guessNo += 1
 
                                 elif user_text < n : 
                                     
-                                    screen.blit(kate_img[1], (kate_x, kate_y))
-                                    screen.blit(kate_db, (db_x, db_y))
+                                    if endgame_result != "lost" :
+                                        screen.blit(kate_img[1], (kate_x, kate_y))
+                                        screen.blit(kate_db, (db_x, db_y))
+                                        tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    else : 
+                                        screen.blit(jokingo_db, (jokingo_db_x, jokingo_db_y))
+                                        tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (jokingo_db_x + jokingo_db_x*0.063 , jokingo_db_y + jokingo_db_y*0.09))
                                     pygame.display.flip()
                                     
-                                    tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                     guessNo += 1
 
                                 elif user_text == n : 
@@ -416,30 +452,35 @@ def normal_mode(screen, screen_width, screen_height) :
                                     
                                     guessNo += 1
                                     
-                                    screen.blit(kate_img[1], (kate_x, kate_y))
-                                    screen.blit(kate_db, (db_x, db_y))
+                                    if endgame_result != "lost" :
+                                        screen.blit(kate_img[1], (kate_x, kate_y))
+                                        screen.blit(kate_db, (db_x, db_y))
 
                                     screen.blit(attempt_box, (attempt_box_x, attempt_box_y))
                                     attempt_text = attempt_text_font.render(f"ATTEMPTS : {guessNo}", True, (40, 209, 52, 255))
                                     screen.blit(attempt_text, (attempt_box_x + (attempt_box_x*0.20), attempt_box_y + (attempt_box_y*0.20)))
                                     pygame.display.flip()
 
-                                    tts(screen, win_prompt, int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    if endgame_result != "lost" :
+                                        tts(screen, win_prompt, int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                     
                                     music_thread(audio.menu_music, "menu_music.wav")
                                     game_over = True
                             
                             except ValueError : 
-
-                                pygame.mixer.music.pause()
-
-                                screen.blit(kate_img[1], (kate_x, kate_y))
-                                screen.blit(kate_db, (db_x, db_y))
-                                pygame.display.flip()
-                                    
-                                tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                 
-                                pygame.mixer.music.unpause()
+                                if endgame_result != "lost" :
+                                    pygame.mixer.music.pause()
+
+                                    screen.blit(kate_img[1], (kate_x, kate_y))
+                                    screen.blit(kate_db, (db_x, db_y))
+                                    pygame.display.flip()
+                                        
+                                    tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    
+                                    pygame.mixer.music.unpause()
+                                
+                                continue
                             
                             finally : 
                                 input_off = False 
@@ -473,7 +514,8 @@ def normal_mode(screen, screen_width, screen_height) :
             
         
         screen.blit(text_surface, (text_x, text_y))
-        screen.blit(kate_img[0], (kate_x, kate_y))
+        if endgame_result != "lost" :
+            screen.blit(kate_img[0], (kate_x, kate_y))
 
 
         pygame.display.flip()
@@ -509,7 +551,8 @@ def normal_mode(screen, screen_width, screen_height) :
                 highscore_msg = input_font.render("NEW HIGHSCORE!", True, (40, 209, 52, 255))
                 screen.blit(highscore_msg, (text_x, text_y))
                 
-                screen.blit(kate_img[0], (kate_x, kate_y))
+                if endgame_result != "lost" : 
+                    screen.blit(kate_img[0], (kate_x, kate_y))
                 
                 pygame.display.flip()
                 clock.tick(60)
@@ -564,7 +607,8 @@ def normal_mode(screen, screen_width, screen_height) :
     while not scoreboard_exit : 
 
         screen.blit(bkg, (0,0))
-        screen.blit(kate_img[0], (kate_x, kate_y))
+        if endgame_result != "lost" :
+            screen.blit(kate_img[0], (kate_x, kate_y))
         screen.blit(input_box, (box_x, box_y))
         
         current_score = scoreboard_font.render(f"CURRENT SCORE : {guessNo}", True, (40, 209, 52, 255))
@@ -601,21 +645,23 @@ def normal_mode(screen, screen_width, screen_height) :
             jokingo_hint_active = False 
 
         
-        if kate_rematch_prompt == True : 
-            screen.blit(bkg, (0,0))
-            screen.blit(kate_img[1], (kate_x, kate_y))
-            screen.blit(kate_db, (db_x, db_y))
-            
-            screen.blit(input_box, (box_x, box_y))
-            current_score = scoreboard_font.render(f"CURRENT SCORE : {guessNo}", True, (40, 209, 52, 255))
-            highscore_render = scoreboard_font.render(f"HIGHSCORE : {highscore}", True, (40, 209, 52, 255))
-            screen.blit(current_score, (text_x, text_y))
-            screen.blit(highscore_render, (text_x, text_y + text_h + (text_h*0.20)))
+        if endgame_result != "lost" :
+        
+            if kate_rematch_prompt == True : 
+                screen.blit(bkg, (0,0))
+                screen.blit(kate_img[1], (kate_x, kate_y))
+                screen.blit(kate_db, (db_x, db_y))
+                
+                screen.blit(input_box, (box_x, box_y))
+                current_score = scoreboard_font.render(f"CURRENT SCORE : {guessNo}", True, (40, 209, 52, 255))
+                highscore_render = scoreboard_font.render(f"HIGHSCORE : {highscore}", True, (40, 209, 52, 255))
+                screen.blit(current_score, (text_x, text_y))
+                screen.blit(highscore_render, (text_x, text_y + text_h + (text_h*0.20)))
 
-            pygame.display.flip()
-            
-            tts(screen, rematch_prompts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
-            kate_rematch_prompt = False
+                pygame.display.flip()
+                
+                tts(screen, rematch_prompts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                kate_rematch_prompt = False
         
         if continue_button.draw() : 
             scoreboard_exit = True 
