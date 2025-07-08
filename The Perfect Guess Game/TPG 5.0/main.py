@@ -50,6 +50,8 @@ screen_width, screen_height = screen.get_size()
 fps = 60 
 
 pygame.display.set_caption("The Perfect Guess")
+game_icon = pygame.image.load(os.path.join(dir_path, "game_icon", "window_icon.png"))
+pygame.display.set_icon(game_icon)
 pygame.display.update 
 
 clock = pygame.time.Clock()
