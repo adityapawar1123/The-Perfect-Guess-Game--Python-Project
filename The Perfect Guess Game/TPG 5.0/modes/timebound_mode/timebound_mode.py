@@ -3,6 +3,7 @@ def timebound_mode(screen, screen_width, screen_height) :
     import threading
     import os 
     import time
+    import sys
     
     from modes.timebound_mode.prompts import roasts, otherprompts
     from data.prompts.common_prompts import rematch_prompts, custom_reversed_range_roasts
@@ -241,7 +242,7 @@ def timebound_mode(screen, screen_width, screen_height) :
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
-                        quit()
+                        sys.exit()
 
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
@@ -484,7 +485,7 @@ def timebound_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
         
         pygame.display.flip()
         clock.tick(fps)
@@ -545,7 +546,7 @@ def timebound_mode(screen, screen_width, screen_height) :
         for event in pygame.event.get() : 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit() 
+                sys.exit() 
         
         pygame.display.flip()
         clock.tick(fps)
@@ -680,7 +681,7 @@ def timebound_mode(screen, screen_width, screen_height) :
                 for event in pygame.event.get() : 
                     if event.type == pygame.QUIT: 
                         pygame.quit()
-                        quit()
+                        sys.exit()
                 
                 pygame.display.flip()
                 clock.tick(60)
@@ -693,7 +694,7 @@ def timebound_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
             
             if input_off == False : 
 
@@ -992,7 +993,7 @@ def timebound_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
         
         pygame.display.flip()
         clock.tick(60)

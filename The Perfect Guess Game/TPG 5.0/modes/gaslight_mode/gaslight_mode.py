@@ -4,6 +4,7 @@ def gaslight_mode(screen, screen_width, screen_height) :
     import threading
     import os 
     import time
+    import sys
     
     from modes.gaslight_mode.prompts import roasts, otherprompts
     from data.prompts.common_prompts import rematch_prompts
@@ -273,7 +274,7 @@ def gaslight_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
         
         pygame.display.flip()
         clock.tick(fps)
@@ -364,7 +365,7 @@ def gaslight_mode(screen, screen_width, screen_height) :
                 for event in pygame.event.get() : 
                     if event.type == pygame.QUIT: 
                         pygame.quit()
-                        quit()
+                        sys.exit()
                 
                 pygame.display.flip()
                 clock.tick(60)
@@ -377,7 +378,7 @@ def gaslight_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
             
             if input_off == False : 
 
@@ -591,15 +592,15 @@ def gaslight_mode(screen, screen_width, screen_height) :
         endgame_unlocker = f.read()
 
     if difficulty == "easy" : 
-        if endgame_unlocker != "lock" and highscore <= 6 : 
+        if endgame_unlocker != "lock" and highscore <= 9 : 
             endgame_unlocked_screen = True 
     
     elif difficulty == "medium" : 
-        if endgame_unlocker != "lock" and highscore <= 8 : 
+        if endgame_unlocker != "lock" and highscore <= 11 : 
             endgame_unlocked_screen = True 
     
     elif difficulty == "hard" : 
-        if endgame_unlocker != "lock" and highscore <= 10 : 
+        if endgame_unlocker != "lock" and highscore <= 13 : 
             endgame_unlocked_screen = True 
     
 
@@ -741,7 +742,7 @@ def gaslight_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
         
         
         pygame.display.flip()

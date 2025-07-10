@@ -3,6 +3,7 @@ def endgame_mode(screen, screen_width, screen_height) :
     import threading
     import os 
     import time
+    import sys
 
     from UI.utils import Button, Syringe
     
@@ -148,7 +149,7 @@ def endgame_mode(screen, screen_width, screen_height) :
             for event in pygame.event.get() :
                 if event.type == pygame.QUIT : 
                     pygame.quit()
-                    quit()
+                    sys.exit()
         
             pygame.display.flip()
             clock.tick(60)
@@ -199,7 +200,7 @@ def endgame_mode(screen, screen_width, screen_height) :
             for event in pygame.event.get() :
                 if event.type == pygame.QUIT : 
                     pygame.quit()
-                    quit()
+                    sys.exit()
             
             pygame.display.flip()
             clock.tick(fps)
@@ -294,7 +295,7 @@ def endgame_mode(screen, screen_width, screen_height) :
                 for event in pygame.event.get() : 
                     if event.type == pygame.QUIT : 
                         pygame.quit()
-                        quit()
+                        sys.exit()
                 
                 pygame.display.flip()
                 clock.tick(fps)
@@ -386,7 +387,7 @@ def endgame_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
             
             if input_off == False : 
 
@@ -550,7 +551,7 @@ def endgame_mode(screen, screen_width, screen_height) :
             for event in pygame.event.get() : 
                 if event.type == pygame.QUIT : 
                     pygame.quit()
-                    quit()
+                    sys.exit()
             pygame.display.flip()
             clock.tick(fps)
         
@@ -563,7 +564,7 @@ def endgame_mode(screen, screen_width, screen_height) :
             for event in pygame.event.get() : 
                 if event.type == pygame.QUIT : 
                     pygame.quit()
-                    quit()
+                    sys.exit()
             pygame.display.flip()
             clock.tick(fps)
         
@@ -582,7 +583,7 @@ def endgame_mode(screen, screen_width, screen_height) :
             for event in pygame.event.get() : 
                 if event.type == pygame.QUIT : 
                     pygame.quit()
-                    quit()
+                    sys.exit()
             pygame.display.flip()
             clock.tick(fps)
         
@@ -594,9 +595,9 @@ def endgame_mode(screen, screen_width, screen_height) :
             for event in pygame.event.get() : 
                 if event.type == pygame.QUIT : 
                     pygame.quit()
-                    quit()
+                    sys.exit()
             pygame.display.flip()
             clock.tick(fps)
         
         pygame.quit()
-        quit()
+        sys.exit()

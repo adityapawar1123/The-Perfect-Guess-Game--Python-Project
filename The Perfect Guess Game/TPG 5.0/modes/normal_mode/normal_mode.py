@@ -3,6 +3,7 @@ def normal_mode(screen, screen_width, screen_height) :
     import threading
     import os 
     import time
+    import sys
     
     from modes.normal_mode.prompts import roasts, otherprompts
     from data.prompts.common_prompts import rematch_prompts, custom_no_range_roasts, custom_low_range_win, custom_low_range_lose, custom_reversed_range_roasts
@@ -226,7 +227,7 @@ def normal_mode(screen, screen_width, screen_height) :
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
-                        quit()
+                        sys.exit()
 
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
@@ -465,7 +466,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
 
         pygame.display.flip()
         clock.tick(fps)
@@ -537,7 +538,7 @@ def normal_mode(screen, screen_width, screen_height) :
                 for event in pygame.event.get() : 
                     if event.type == pygame.QUIT: 
                         pygame.quit()
-                        quit()
+                        sys.exit()
                 
                 pygame.display.flip()
                 clock.tick(60)
@@ -550,7 +551,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
             
             if input_off == False : 
 
@@ -932,7 +933,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
             if event.type == pygame.QUIT : 
                 pygame.quit()
-                quit()
+                sys.exit()
         
         
         pygame.display.flip()

@@ -2,6 +2,7 @@ import pygame
 import pyttsx3
 engine = pyttsx3.init()
 import time
+import sys
 
 
 def fade(screen, fade_in=True, speed=10, color=(0, 0, 0)):
@@ -171,14 +172,14 @@ def game_mode() :
             
             if yes_button.draw() : 
                pygame.quit()
-               quit()
+               sys.exit()
             if no_button.draw() : 
                break #breaks the inner loop and returns to game selection screen
 
             for event in pygame.event.get() : 
                if event.type == pygame.QUIT : 
                   pygame.quit()
-                  quit()
+                  sys.exit()
 
             pygame.display.flip()
             clock.tick(fps)
@@ -225,7 +226,7 @@ def game_mode() :
       for event in pygame.event.get() : 
          if event.type == pygame.QUIT : 
             pygame.quit()
-            quit()
+            sys.exit()
       
       pygame.display.flip()
       clock.tick(fps)
@@ -331,14 +332,14 @@ def menu() :
             
             if yes_button.draw() : 
                pygame.quit()
-               quit()
+               sys.exit()
             if no_button.draw() : 
                break #breaks the inner loop and returns to game selection screen
 
             for event in pygame.event.get() : 
                if event.type == pygame.QUIT : 
                   pygame.quit()
-                  quit()
+                  sys.exit()
 
             pygame.display.flip()
             clock.tick(fps)
@@ -348,7 +349,7 @@ def menu() :
 
          if event.type == pygame.QUIT : 
             pygame.quit()
-            quit()
+            sys.exit()
       
       pygame.display.flip()
       clock.tick(fps)
@@ -385,7 +386,7 @@ if endgame_result == "lost" and aftermath_counter == "" :
       for event in pygame.event.get() : 
          if event.type == pygame.QUIT : 
             pygame.quit()
-            quit()
+            sys.exit()
 
       pygame.display.flip()
       clock.tick(30)
