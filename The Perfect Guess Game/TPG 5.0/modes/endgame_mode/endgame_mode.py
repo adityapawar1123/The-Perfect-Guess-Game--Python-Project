@@ -216,7 +216,7 @@ def endgame_mode(screen, screen_width, screen_height) :
     kate_attempt_prompt = False
     
     n = random.randint(1, 500)
-    truth_serum = 5
+    truth_serum = 3
     attempts_left = 15
 
     input_box_raw = pygame.image.load(os.path.join(tpg_5, "UI", "ui", "input_box.png")).convert_alpha()
