@@ -596,11 +596,11 @@ def gaslight_mode(screen, screen_width, screen_height) :
             endgame_unlocked_screen = True 
     
     elif difficulty == "medium" : 
-        if endgame_unlocker != "lock" and highscore <= 11 : 
+        if endgame_unlocker != "lock" and highscore <= 15 : 
             endgame_unlocked_screen = True 
     
     elif difficulty == "hard" : 
-        if endgame_unlocker != "lock" and highscore <= 13 : 
+        if endgame_unlocker != "lock" and highscore <= 20 : 
             endgame_unlocked_screen = True 
     
 
