@@ -233,7 +233,7 @@ def normal_mode(screen, screen_width, screen_height) :
 
                             try : 
                                 n1 = int(n1)
-                                if n1 <= 0 : 
+                                if n1 < 0 : 
                                     raise Exception("Negative_Number")
                                 else : 
                                     return n1
@@ -427,7 +427,7 @@ def normal_mode(screen, screen_width, screen_height) :
             n2_prompt = random.choice(["Now, what's the last number in your range?", 
                                        "Alright, what's the maximum number?",
                                        "You better not make this too easy. What's the top number?",
-                                       "End of the range, please. And no, infinity isn't allowed."])
+                                       "Enter end of the range. And no, infinity isn't allowed."])
             n2 = custom_input(screen, screen_width, screen_height, bkg, input_box, 
                               kate_img, kate_db, endgame_result, n2_prompt)
 

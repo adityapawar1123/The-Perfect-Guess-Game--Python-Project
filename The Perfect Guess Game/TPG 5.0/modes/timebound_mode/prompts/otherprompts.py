@@ -2,17 +2,17 @@ import random
 
 def timebound_mode_explain() : 
     timebound_mode_explain = [
-        "\nThe rules are simple, I choose a number and you have to guess it before the time runs out!",
-        "\nGuess the number I picked... but be quick, the clock's ticking!",
-        "\nIt's a race against time — guess the number before the countdown hits zero!",
-        "\nYou vs. my secret number vs. the timer. Go!",
-        "\nPick a difficulty, set a timer, and let the chaos begin!",
-        "\nYou guess, the timer ticks, I laugh... let's go.",
-        "\nSpeed matters! Guess right before time explodes!",
-        "\nDon't overthink it. Just guess. Fast.",
-        "\nIf you wait too long, you lose. Simple as that.",
-        "\nStart guessing fast or lose, lol.",
-        "\nLet's see how fast your brain really is...guess the number before the timer runs out!"
+        "The rules are simple, I choose a number and you have to guess it before the time runs out!",
+        "Guess the number I picked... but be quick, the clock's ticking!",
+        "It's a race against time — guess the number before the countdown hits zero!",
+        "You vs. my secret number vs. the timer. Go!",
+        "Pick a difficulty, set a timer, and let the chaos begin!",
+        "You guess, the timer ticks, I laugh... let's go.",
+        "Speed matters! Guess right before time explodes!",
+        "Don't overthink it. Just guess. Fast.",
+        "If you wait too long, you lose. Simple as that.",
+        "Start guessing fast or lose, lol.",
+        "Let's see how fast your brain really is... guess the number before the timer runs out!"
     ]
     return random.choice(timebound_mode_explain)
 
@@ -59,3 +59,20 @@ def lose_prompts() :
 ]
 
     return random.choice(lose_prompts)
+
+def custom_timer_prompts() : 
+    custom_timer_prompts = [
+        "Tick tock, buddy. How long do you think you'll need?",
+        "Set the timer. Or are you scared of the pressure already?",
+        "Pick your poison: how fast do you wanna lose?",
+        "Choose a time. The clock won't start itself, genius.",
+        "You gotta pick a countdown, not just vibe in the void.",
+        "C'mon now, pick a time limit. Or are you just here to waste mine?",
+        "Want 10 seconds or 60? Either way, I hope you panic.",
+        "No pressure... yet. Pick your timer and let the chaos begin.",
+        "Your guess is against the clock. Choose wisely. Or don't. I like watching people fail.",
+        "You're stalling. Set a timer before I do it for you.",
+        "Wanna go easy on yourself or flex your 2 brain cells? Pick the countdown.",
+        "Input a countdown like your dignity depends on it. Cuz it does."
+    ]
+    return random.choice(custom_timer_prompts)

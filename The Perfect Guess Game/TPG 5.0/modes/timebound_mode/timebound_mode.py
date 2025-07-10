@@ -5,7 +5,7 @@ def timebound_mode(screen, screen_width, screen_height) :
     import time
     
     from modes.timebound_mode.prompts import roasts, otherprompts
-    from data.prompts.common_prompts import rematch_prompts
+    from data.prompts.common_prompts import rematch_prompts, custom_reversed_range_roasts
     from UI.utils import Button
 
     # Set the environment variable BEFORE importing pygame
@@ -78,7 +78,6 @@ def timebound_mode(screen, screen_width, screen_height) :
                 if countdown_secs['remaining_time'] == 10 : 
                     pygame.mixer.music.stop()
                     music_thread(audio.timebound_mode_music, "timebound_10_sec_left.wav")
-                    continue
     
     
     db_font_path = os.path.join(tpg_5, "UI", "pixellari.ttf")
@@ -194,12 +193,144 @@ def timebound_mode(screen, screen_width, screen_height) :
             y += line_spacing # After drawing one line, you move down by the amount defined in line_spacing so the next line appears underneath it.
             
         pygame.display.flip()
+        clock.tick(fps)
+    
+    
+    def custom_input(screen, screen_width, screen_height, bkg, input_box, kate_img, kate_db, endgame_result, prompt_text) : 
+        
+        n1 = ""
+        prompt = False
+        input_font = pygame.font.Font(input_font_path, font_size)
+
+        last_cusor_toggle = pygame.time.get_ticks()
+        CURSOR_DURATION = 500 # in ms
+        cursor_visible = True
+
+        box_w = int(screen_width*0.4)
+        box_h = int(screen_height*0.3)
+        box_x  = int(screen_width * 0.5 - box_w * 0.5) # centered
+        box_y  = int(screen_height * 0.5 - box_h*0.5)
+        kate_x = int(screen_width*0.03) 
+        kate_y = int(screen_height*0.7)
+        kate_w = int(screen_width*0.2)
+        kate_h = int(screen_height*0.4)
+        db_x = int((kate_x + kate_w) - kate_w*0.15) 
+        db_y = (kate_y - (kate_y*0.05))  # push db toward bottom  
+
+        while True : 
+                current = pygame.time.get_ticks()
+
+                screen.blit(bkg, (0,0))
+                screen.blit(input_box, (box_x, box_y))
+                if endgame_result != "lost" : 
+                    screen.blit(kate_img[0], (kate_x, kate_y))
+                
+                if prompt == False and endgame_result != "lost" : 
+                    screen.blit(bkg, (0,0))
+                    screen.blit(input_box, (box_x, box_y))
+                    screen.blit(kate_img[1], (kate_x, kate_y))
+                    screen.blit(kate_db, (db_x, db_y))
+                    tts(screen, prompt_text, int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                    prompt = True
+                    continue
+
+                if current - last_cusor_toggle >= CURSOR_DURATION : 
+                    last_cusor_toggle = current 
+                    cursor_visible = not cursor_visible # Flips True to False and False to True
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        quit()
+
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+
+                            try : 
+                                n1 = int(n1)
+                                if n1 < 0 : 
+                                    raise Exception("Negative_Number")
+                                else : 
+                                    return n1
+                            
+                            except ValueError :
+
+                                if endgame_result != "lost" :
+                                    
+                                    screen.blit(bkg, (0,0))
+                                    screen.blit(input_box, (box_x, box_y))
+                                    screen.blit(kate_img[1], (kate_x, kate_y))
+                                    screen.blit(kate_db, (db_x, db_y))
+
+                                    pygame.mixer.music.pause()
+                                    tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                    pygame.mixer.music.unpause()
+                                    
+                                    continue
+                            
+                            except Exception as e : 
+
+                                if str(e) == "Negative_Number" : 
+
+                                    if endgame_result != "lost" :
+
+                                        negative_num_roasts = random.choice(["Seriously? A negative number?",
+                                                                             "What you thought you'd break the game? Enter a POSITIVE number!",
+                                                                             "Cute try, now enter a positive goddamn number!",
+                                                                             "Aww my little hacker, look at you entering negative numbers.",
+                                                                             "You thought that'd do something huh? Enter a POSITIVE number!"])
+                                    
+                                        screen.blit(bkg, (0,0))
+                                        screen.blit(input_box, (box_x, box_y))
+                                        screen.blit(kate_img[1], (kate_x, kate_y))
+                                        screen.blit(kate_db, (db_x, db_y))
+
+                                        pygame.mixer.music.pause()
+                                        tts(screen, negative_num_roasts, int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                                        pygame.mixer.music.unpause()
+
+                                        n1 = str(n1)
+                                        
+                                        continue
+
+                            n1 = ""       # clear after enter, or break loop, etc.
+                        
+                        elif event.key == pygame.K_BACKSPACE:
+                            n1 = n1[:-1]   # remove last character
+                        else:
+                            new_text = n1 + event.unicode 
+                            new_surf = input_font.render(str(new_text), True, (40, 209, 52, 255))
+                            # only accept if it fits within the box (minus padding)
+                            if new_surf.get_width() <= (box_w - 2*padding_x):
+                                n1 = new_text
+
+                # 3) Render the current text
+                text_surface = input_font.render(str(n1), True, (40, 209, 52, 255))
+
+                text_w = text_surface.get_width()
+                text_h = text_surface.get_height()
+                cursor_y = text_y + text_h
+                cursor_start = text_x + text_w + 2
+                cursor_end = cursor_start + font_size//2
+            
+                if cursor_visible : 
+                    pygame.draw.line(screen, # game window pe draw karo
+                                    (40, 209, 52, 255), # rgba color code for white
+                                    (cursor_start, cursor_y), # start coordinates (x,y)
+                                    (cursor_end, cursor_y), # end coordinates (x,y) --> 236 - 200 = 36 (to match font size)
+                                    2) #thickness of the line in pixels
+                
+                screen.blit(text_surface, (text_x, text_y))
+
+                pygame.display.flip()
+                clock.tick(60)
     
     
 
-    easy_button = Button("01_easy.png", "02_easy.png", "03_easy.png", (0.50, 0.40), screen, screen_width, screen_height)    
-    medium_button = Button("01_medium.png", "02_medium.png", "03_medium.png", (0.50, 0.50), screen, screen_width, screen_height)    
-    hard_button = Button("01_hard.png", "02_hard.png", "03_hard.png", (0.50, 0.60), screen, screen_width, screen_height)    
+    easy_button = Button("01_easy.png", "02_easy.png", "03_easy.png", (0.50, 0.35), screen, screen_width, screen_height)    
+    medium_button = Button("01_medium.png", "02_medium.png", "03_medium.png", (0.50, 0.45), screen, screen_width, screen_height)    
+    hard_button = Button("01_hard.png", "02_hard.png", "03_hard.png", (0.50, 0.55), screen, screen_width, screen_height)
+    custom_button = Button("01_custom.png", "02_custom.png", "03_custom.png", (0.50, 0.65), screen, screen_width, screen_height)    
 
 
     from modes.timebound_mode.prompts.otherprompts import timebound_mode_explain, win_prompts, lose_prompts
@@ -212,6 +343,28 @@ def timebound_mode(screen, screen_width, screen_height) :
     intro = True 
     clock = pygame.time.Clock()
     fps = 60
+
+    input_box_raw = pygame.image.load(os.path.join(tpg_5, "UI", "ui", "input_box.png")).convert_alpha()
+    box_w = int(screen_width*0.4)
+    box_h = int(screen_height*0.3)
+    input_box = pygame.transform.scale(input_box_raw, (box_w, box_h))
+    box_x  = int(screen_width * 0.5 - box_w * 0.5) # centered
+    box_y  = int(screen_height * 0.5 - box_h*0.5)
+
+    timer_box_raw = pygame.image.load(os.path.join(tpg_5, "UI", "ui", "timer.png"))
+    timer_w = int(screen_width*0.25)
+    timer_h = int(screen_height*0.15)
+    timer_box = pygame.transform.scale(timer_box_raw, (timer_w, timer_h))
+    timer_x = int(screen_width*0.50 - timer_w*0.50)
+    timer_y = int(screen_height*0.15)
+    countdown_secs_text_font = pygame.font.Font(input_font_path, int(timer_h*0.40))
+
+    font_size = int(screen_height*0.05)
+    input_font = pygame.font.Font(input_font_path, font_size)
+    padding_x = int(box_w*0.23) # 23% of box width
+    text_x = box_x + padding_x
+    text_y = box_y + ((box_h - font_size) // 4) + box_y*0.06
+    user_text = ""    # This will hold what the player types
     
     while not difficulty_selected : 
 
@@ -275,12 +428,58 @@ def timebound_mode(screen, screen_width, screen_height) :
             n = random.randint(1,1000)
             difficulty_selected = True
         
+        elif custom_button.draw() : 
+            difficulty = "custom" 
+            
+            n1_prompt = random.choice(["What number do you want to start the range from?", 
+                                       "I swear, if you say 69, I'm judging you. What's the starting number?",
+                                       "Alright, what's the first number in your custom range?"])
+            n1 = custom_input(screen, screen_width, screen_height, bkg, input_box, 
+                              kate_img, kate_db, endgame_result, n1_prompt)
+            
+            if endgame_result == "lost" :
+                screen.blit(bkg, (0,0))
+                screen.blit(jokingo_db, (jokingo_db_x, jokingo_db_y))
+                tts(screen, "Enter the maximum number you want in range.", 
+                    int(screen_height*0.025), (0, 0, 0), (jokingo_db_x + jokingo_db_x*0.063 , jokingo_db_y + jokingo_db_y*0.09))
+            
+            n2_prompt = random.choice(["Now, what's the last number in your range?", 
+                                       "Alright, what's the maximum number?",
+                                       "You better not make this too easy. What's the top number?",
+                                       "Enter end of the range. And no, infinity isn't allowed."])
+            n2 = custom_input(screen, screen_width, screen_height, bkg, input_box, 
+                              kate_img, kate_db, endgame_result, n2_prompt)
+
+            
+            try :  
+                
+                n = random.randint(n1, n2)
+                if endgame_result != "lost" : 
+                    screen.blit(bkg, (0,0))
+                    screen.blit(kate_img[1], (kate_x, kate_y))
+                    screen.blit(kate_db, (db_x, db_y))
+                    tts(screen, f"You have to guess a number between {n1} and {n2}.", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                difficulty_selected = True
+            
+            except ValueError : #if the players switch the order of n1 and n2
+                if endgame_result != "lost" :
+                    screen.blit(bkg, (0,0))
+                    screen.blit(kate_img[1], (kate_x, kate_y))
+                    screen.blit(kate_db, (db_x, db_y))
+                    tts(screen, custom_reversed_range_roasts(n1,n2), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                else : 
+                    screen.blit(bkg, (0,0))
+                    screen.blit(jokingo_db, (jokingo_db_x, jokingo_db_y))
+                    tts(screen, "Please put the number range in increasing order.", 
+                    int(screen_height*0.025), (0, 0, 0), (jokingo_db_x + jokingo_db_x*0.063 , jokingo_db_y + jokingo_db_y*0.09))
+        
         else : 
+
             if endgame_result != "lost" :
                 kate = kate_img[0]
                 screen.blit(kate, (kate_x, kate_y))
                 pygame.display.flip()
-
+        
         for event in pygame.event.get() : 
 
             if event.type == pygame.QUIT : 
@@ -293,10 +492,11 @@ def timebound_mode(screen, screen_width, screen_height) :
     timer_selected = False 
     timer_prompt = True
     
-    ten_secs_button = Button("01_10secs.png", "02_10secs.png", "03_10secs.png", (0.50, 0.35), screen, screen_width, screen_height)
-    twenty_secs_button = Button("01_20secs.png", "02_20secs.png", "03_20secs.png", (0.50, 0.45), screen, screen_width, screen_height)    
-    thirty_secs_button = Button("01_30secs.png", "02_30secs.png", "03_30secs.png", (0.50, 0.55), screen, screen_width, screen_height)
-    forty_secs_button = Button("01_40secs.png", "02_40secs.png", "03_40secs.png", (0.50, 0.65), screen, screen_width, screen_height)
+    ten_secs_button = Button("01_10secs.png", "02_10secs.png", "03_10secs.png", (0.50, 0.30), screen, screen_width, screen_height)
+    twenty_secs_button = Button("01_20secs.png", "02_20secs.png", "03_20secs.png", (0.50, 0.40), screen, screen_width, screen_height)    
+    thirty_secs_button = Button("01_30secs.png", "02_30secs.png", "03_30secs.png", (0.50, 0.50), screen, screen_width, screen_height)
+    forty_secs_button = Button("01_40secs.png", "02_40secs.png", "03_40secs.png", (0.50, 0.60), screen, screen_width, screen_height)
+    custom_button = Button("01_custom.png", "02_custom.png", "03_custom.png", (0.50, 0.70), screen, screen_width, screen_height)
 
     while not timer_selected : 
 
@@ -312,7 +512,7 @@ def timebound_mode(screen, screen_width, screen_height) :
                 pygame.display.flip()
                 tts(screen, "Pick a time limit: 10, 20, 30 or 40 seconds?", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                 timer_prompt = False
-
+            
         if ten_secs_button.draw() : 
             countdown_secs = 10 
             timer_selected = True
@@ -327,7 +527,20 @@ def timebound_mode(screen, screen_width, screen_height) :
 
         elif forty_secs_button.draw() : 
             countdown_secs = 40 
-            timer_selected = True 
+            timer_selected = True
+
+        if difficulty == "custom" :
+
+            if custom_button.draw() :
+                if endgame_result == "lost" : 
+                    screen.blit(bkg, (0,0))
+                    screen.blit(jokingo_db, (jokingo_db_x, jokingo_db_y))
+                    pygame.display.flip()
+                    tts(screen, "Select a timer.", int(screen_height*0.025), (0, 0, 0), (jokingo_db_x + jokingo_db_x*0.063 , jokingo_db_y + jokingo_db_y*0.09))
+                
+                countdown_secs = custom_input(screen, screen_width, screen_height, bkg, input_box, 
+                                kate_img, kate_db, endgame_result, otherprompts.custom_timer_prompts())
+                timer_selected = True 
 
         for event in pygame.event.get() : 
             if event.type == pygame.QUIT : 
@@ -345,28 +558,7 @@ def timebound_mode(screen, screen_width, screen_height) :
     input_off = False
     kate = kate_img[0]
     guessNo = 0 
-    
-    input_box_raw = pygame.image.load(os.path.join(tpg_5, "UI", "ui", "input_box.png")).convert_alpha()
-    box_w = int(screen_width*0.4)
-    box_h = int(screen_height*0.3)
-    input_box = pygame.transform.scale(input_box_raw, (box_w, box_h))
-    box_x  = int(screen_width * 0.5 - box_w * 0.5) # centered
-    box_y  = int(screen_height * 0.5 - box_h*0.5)
 
-    timer_box_raw = pygame.image.load(os.path.join(tpg_5, "UI", "ui", "timer.png"))
-    timer_w = int(screen_width*0.25)
-    timer_h = int(screen_height*0.15)
-    timer_box = pygame.transform.scale(timer_box_raw, (timer_w, timer_h))
-    timer_x = int(screen_width*0.50 - timer_w*0.50)
-    timer_y = int(screen_height*0.15)
-    countdown_secs_text_font = pygame.font.Font(input_font_path, int(timer_h*0.40))
-
-    font_size = int(screen_height*0.05)
-    input_font = pygame.font.Font(input_font_path, font_size)
-    padding_x = int(box_w*0.23) # 23% of box width
-    text_x = box_x + padding_x
-    text_y = box_y + ((box_h - font_size) // 4) + box_y*0.06
-    user_text = ""    # This will hold what the player types
 
     last_cusor_toggle = pygame.time.get_ticks()
     CURSOR_DURATION = 500 # in ms
@@ -386,41 +578,53 @@ def timebound_mode(screen, screen_width, screen_height) :
         try : 
             if shared_state["remaining_time"] <= 0 : 
                 input_off = True
-                raise TimeoutError #So it comes to hard stop no matter wht the player is doing at the time
+                raise Exception("Time_Out") #So it comes to hard stop no matter wht the player is doing at the time
         
-        except TimeoutError : 
-            sound_effect_channel = pygame.mixer.Channel(1)
-            timer_beep_path = os.path.join(tpg_5, "audio", "sound_effect", "timer_beep.mp3")
-            timer_beep = pygame.mixer.Sound(timer_beep_path)
-            lose_sound_effect_path = os.path.join(tpg_5, "audio", "sound_effect", "lose_sound_effect.mp3")
-            lose_sound_effect = pygame.mixer.Sound(lose_sound_effect_path)
-            sound_effect_channel.set_volume(1) # volume on 100%
+        except Exception as e :
 
-            pygame.mixer.music.fadeout(1000)
-            sound_effect_channel.play(timer_beep)
-            while sound_effect_channel.get_busy() : 
-                pygame.time.wait(10)
-            
-            sound_effect_channel.play(lose_sound_effect)
-            while sound_effect_channel.get_busy() : 
-                pygame.time.wait(10) #Checks every 10sec if channel is still busy
-                            
-            screen.blit(bkg, (0,0))
-            screen.blit(input_box, (box_x, box_y))
-            screen.blit(timer_box, (timer_x, timer_y))
-            countdown_secs_text = countdown_secs_text_font.render(f"00:00", True, (136, 8, 8))
-            screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
-            if endgame_result != "lost" :
-                screen.blit(kate_img[1], (kate_x, kate_y))
-                screen.blit(kate_db, (db_x, db_y))
+            if str(e) == "Time_Out" :  
+                sound_effect_channel = pygame.mixer.Channel(1)
+                timer_beep_path = os.path.join(tpg_5, "audio", "sound_effect", "timer_beep.mp3")
+                timer_beep = pygame.mixer.Sound(timer_beep_path)
+                lose_sound_effect_path = os.path.join(tpg_5, "audio", "sound_effect", "lose_sound_effect.mp3")
+                lose_sound_effect = pygame.mixer.Sound(lose_sound_effect_path)
+                sound_effect_channel.set_volume(1) # volume on 100%
 
-            pygame.display.flip()
+                pygame.mixer.music.fadeout(1000)
 
-            if endgame_result != "lost" :
-                tts(screen, lose_prompts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                screen.blit(bkg, (0,0))
+                screen.blit(input_box, (box_x, box_y))
+                screen.blit(timer_box, (timer_x, timer_y))
+                countdown_secs_text = countdown_secs_text_font.render(f"00:00", True, (136, 8, 8))
+                if countdown_secs <= 60 : 
+                    screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
+                else : 
+                    screen.blit(custom_countdown_secs_text, (custom_countdown_x, custom_countdown_y))
+                if endgame_result != "lost" :
+                    screen.blit(kate_img[1], (kate_x, kate_y))
+                pygame.display.flip()
+
+                
+                sound_effect_channel.play(timer_beep)
+                while sound_effect_channel.get_busy() : 
+                    pygame.time.wait(10)
+                
+                sound_effect_channel.play(lose_sound_effect)
+                while sound_effect_channel.get_busy() : 
+                    pygame.time.wait(10) #Checks every 10sec if channel is still busy
                                 
-            music_thread(audio.menu_music, "menu_music.wav")
-            game_over = True
+                
+
+                if endgame_result != "lost" and difficulty != "custom" :
+                    screen.blit(kate_db, (db_x, db_y))
+                    tts(screen, lose_prompts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                
+                elif endgame_result != "lost" and difficulty == "custom" :
+                    screen.blit(kate_db, (db_x, db_y)) 
+                    tts(screen, roasts.custom_lose_roasts(countdown_secs), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
+                
+                music_thread(audio.menu_music, "menu_music.wav")
+                game_over = True
 
         if shared_state["remaining_time"] >= 10 : 
             timer_padding = ""
@@ -431,7 +635,14 @@ def timebound_mode(screen, screen_width, screen_height) :
         screen.blit(input_box, (box_x, box_y))
         screen.blit(timer_box, (timer_x, timer_y))
         countdown_secs_text = countdown_secs_text_font.render(f"00:{timer_padding}{shared_state['remaining_time']}", True, (136, 8, 8))
-        screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
+        custom_countdown_secs_text = countdown_secs_text_font.render(f"{shared_state['remaining_time']}", True, (136, 8, 8))
+
+        if countdown_secs <= 60 : 
+            screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
+        else :
+            custom_countdown_x = int(timer_x + (timer_w//2 - custom_countdown_secs_text.get_width()//2))
+            custom_countdown_y = int(timer_y + (timer_h//2 - custom_countdown_secs_text.get_height()//2)) 
+            screen.blit(custom_countdown_secs_text, (custom_countdown_x, custom_countdown_y))
 
         if back_button.draw() : 
 
@@ -495,33 +706,53 @@ def timebound_mode(screen, screen_width, screen_height) :
                                 user_text = int(user_text)
                                 
                                 if user_text > n : 
+                                    guessNo += 1
                                     
                                     if endgame_result != "lost" :
+                                        screen.blit(bkg, (0,0))
+                                        screen.blit(input_box, (box_x, box_y))
+                                        screen.blit(timer_box, (timer_x, timer_y))
+                                        if countdown_secs <= 60 : 
+                                            screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
+                                        else : 
+                                            screen.blit(custom_countdown_secs_text, (custom_countdown_x, custom_countdown_y))
+
                                         screen.blit(kate_img[1], (kate_x, kate_y))
                                         screen.blit(kate_db, (db_x, db_y))
+                                        pygame.display.flip()
                                         tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                     else : 
                                         screen.blit(jokingo_db, (jokingo_db_x, jokingo_db_y))
+                                        pygame.display.flip()
                                         tts(screen, "Guess a lower number!", int(screen_height*0.025), (0, 0, 0), (jokingo_db_x + jokingo_db_x*0.063 , jokingo_db_y + jokingo_db_y*0.09))
 
-                                    pygame.display.flip()
-                                    guessNo += 1
+                                    
 
                                 elif user_text < n : 
+                                    guessNo += 1
                                     
                                     if endgame_result != "lost" :
+                                        screen.blit(bkg, (0,0))
+                                        screen.blit(input_box, (box_x, box_y))
+                                        screen.blit(timer_box, (timer_x, timer_y))
+                                        if countdown_secs <= 60 : 
+                                            screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
+                                        else : 
+                                            screen.blit(custom_countdown_secs_text, (custom_countdown_x, custom_countdown_y))
+
                                         screen.blit(kate_img[1], (kate_x, kate_y))
                                         screen.blit(kate_db, (db_x, db_y))
+                                        pygame.display.flip()
                                         tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                     
                                     else : 
                                         screen.blit(jokingo_db, (jokingo_db_x, jokingo_db_y))
+                                        pygame.display.flip()
                                         tts(screen, "Guess a higher number!", int(screen_height*0.025), (0, 0, 0), (jokingo_db_x + jokingo_db_x*0.063 , jokingo_db_y + jokingo_db_y*0.09))
 
-                                    pygame.display.flip()
-                                    guessNo += 1
 
                                 elif user_text == n : 
+                                    guessNo += 1
 
                                     shared_state["pause_timer"] = True
                                     sound_effect_channel = pygame.mixer.Channel(1)
@@ -530,29 +761,44 @@ def timebound_mode(screen, screen_width, screen_height) :
                                     sound_effect_channel.set_volume(1) # volume on 100%
                                     
                                     pygame.mixer.music.fadeout(1000)
+                                    
+                                    if endgame_result != "lost" :
+                                        screen.blit(bkg, (0,0))
+                                        screen.blit(input_box, (box_x, box_y))
+                                        screen.blit(timer_box, (timer_x, timer_y))
+                                        if countdown_secs <= 60 : 
+                                            screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
+                                        else : 
+                                            screen.blit(custom_countdown_secs_text, (custom_countdown_x, custom_countdown_y))
+                                        screen.blit(kate_img[1], (kate_x, kate_y)) 
+                                    pygame.display.flip()
+                                    
                                     sound_effect_channel.play(win_sound_effect)
                                     while sound_effect_channel.get_busy() : 
                                         pygame.time.wait(10) #Checks every 10sec if channel is still busy
 
-                                    guessNo += 1
                                     
                                     if endgame_result != "lost" :
-                                        screen.blit(kate_img[1], (kate_x, kate_y))
                                         screen.blit(kate_db, (db_x, db_y))
-
-                                    pygame.display.flip()
-                                    
-                                    if endgame_result != "lost" :
                                         tts(screen, win_prompts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                     
                                     music_thread(audio.menu_music, "menu_music.wav")
                                     game_over = True
                             
                             
-                            except ValueError : 
+                            except ValueError :
+                                shared_state['pause_timer'] = True  
 
                                 if endgame_result != "lost" :
                                     pygame.mixer.music.pause()
+
+                                    screen.blit(bkg, (0,0))
+                                    screen.blit(input_box, (box_x, box_y))
+                                    screen.blit(timer_box, (timer_x, timer_y))
+                                    if countdown_secs <= 60 : 
+                                        screen.blit(countdown_secs_text, (timer_x + (timer_x*0.19), timer_y + (timer_y*0.35)))
+                                    else : 
+                                        screen.blit(custom_countdown_secs_text, (custom_countdown_x, custom_countdown_y))
 
                                     screen.blit(kate_img[1], (kate_x, kate_y))
                                     screen.blit(kate_db, (db_x, db_y))
@@ -561,7 +807,8 @@ def timebound_mode(screen, screen_width, screen_height) :
                                     tts(screen, invalid_input_roasts(), int(screen_height*0.025), (0, 0, 0), (db_x + db_x*0.06 , db_y + db_y*0.09))
                                     
                                     pygame.mixer.music.unpause()
-                                
+
+                                shared_state['pause_timer'] = False 
                                 continue
                         
                         user_text = ""       # clear after enter, or break loop, etc.
@@ -645,6 +892,7 @@ def timebound_mode(screen, screen_width, screen_height) :
     
     continue_button = Button("01_continue.png", "02_continue.png", "03_continue.png", (0.88, 0.865), screen, screen_width, screen_height)
     scoreboard_font = pygame.font.Font(input_font_path, int(screen_height*0.025))
+    line_spacing = int(scoreboard_font.get_height() + scoreboard_font.get_height()*0.60)
 
     scoreboard_exit = False 
     kate_rematch_prompt = True
@@ -660,8 +908,23 @@ def timebound_mode(screen, screen_width, screen_height) :
             remaining_time = scoreboard_font.render(f"TIME REMAINING : {shared_state['remaining_time']+1}s", True, (40, 209, 52, 255))
         else : 
             remaining_time = scoreboard_font.render(f"TIME REMAINING : 0s", True, (40, 209, 52, 255))
-        screen.blit(remaining_time, (text_x, text_y + text_h + (text_h*0.20)))
-        screen.blit(current_score, (text_x, text_y))
+        timer_text = scoreboard_font.render(f"TIMER : {countdown_secs}s", True, (40, 209, 52, 255))
+        if difficulty == "custom" : 
+            custom_range = scoreboard_font.render(f"RANGE : {n1} to {n2}", True, (40, 209, 52, 255))
+        else : 
+            difficulty_text = scoreboard_font.render(f"DIFFICULTY : {difficulty.upper()}", True, (40, 209, 52, 255))
+        
+        if difficulty == "custom" : 
+            screen.blit(custom_range, (text_x, text_y))
+            screen.blit(current_score, (text_x, text_y + line_spacing))
+            screen.blit(timer_text, (text_x, text_y + 2*line_spacing))
+            screen.blit(remaining_time, (text_x, text_y + 3*line_spacing))
+        else : 
+            screen.blit(difficulty_text, (text_x, text_y))
+            screen.blit(current_score, (text_x, text_y + line_spacing))
+            screen.blit(timer_text, (text_x, text_y + 2*line_spacing))
+            screen.blit(remaining_time, (text_x, text_y + 3*line_spacing))
+                
 
 
         if jokingo_hint_active == True : 
@@ -669,9 +932,16 @@ def timebound_mode(screen, screen_width, screen_height) :
             screen.blit(input_box, (box_x, box_y))
             screen.blit(voice_db, (voice_db_x, voice_db_y))
             
-            current_score = scoreboard_font.render(f"ATTEMPTS TAKEN : {guessNo}", True, (40, 209, 52, 255))
-            screen.blit(remaining_time, (text_x, text_y + text_h + (text_h*0.20)))
-            screen.blit(current_score, (text_x, text_y))
+            if difficulty == "custom" : 
+                screen.blit(custom_range, (text_x, text_y))
+                screen.blit(current_score, (text_x, text_y + line_spacing))
+                screen.blit(timer_text, (text_x, text_y + 2*line_spacing))
+                screen.blit(remaining_time, (text_x, text_y + 3*line_spacing))
+            else : 
+                screen.blit(difficulty_text, (text_x, text_y))
+                screen.blit(current_score, (text_x, text_y + line_spacing))
+                screen.blit(timer_text, (text_x, text_y + 2*line_spacing))
+                screen.blit(remaining_time, (text_x, text_y + 3*line_spacing))
 
             pygame.display.flip()
 
@@ -690,6 +960,8 @@ def timebound_mode(screen, screen_width, screen_height) :
             
             jokingo_hint_active = False 
 
+        
+        
         if endgame_result != "lost" :        
             if kate_rematch_prompt == True : 
                 screen.blit(bkg, (0,0))
@@ -697,10 +969,16 @@ def timebound_mode(screen, screen_width, screen_height) :
                 screen.blit(kate_db, (db_x, db_y))
                 
                 screen.blit(input_box, (box_x, box_y))
-                current_score = scoreboard_font.render(f"ATTEMPTS TAKEN : {guessNo}", True, (40, 209, 52, 255))
-                
-                screen.blit(remaining_time, (text_x, text_y + text_h + (text_h*0.20)))
-                screen.blit(current_score, (text_x, text_y))
+                if difficulty == "custom" : 
+                    screen.blit(custom_range, (text_x, text_y))
+                    screen.blit(current_score, (text_x, text_y + line_spacing))
+                    screen.blit(timer_text, (text_x, text_y + 2*line_spacing))
+                    screen.blit(remaining_time, (text_x, text_y + 3*line_spacing))
+                else : 
+                    screen.blit(difficulty_text, (text_x, text_y))
+                    screen.blit(current_score, (text_x, text_y + line_spacing))
+                    screen.blit(timer_text, (text_x, text_y + 2*line_spacing))
+                    screen.blit(remaining_time, (text_x, text_y + 3*line_spacing))
 
                 pygame.display.flip()
                 

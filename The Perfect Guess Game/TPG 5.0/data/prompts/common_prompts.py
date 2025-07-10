@@ -47,7 +47,7 @@ def rematch_prompts() :
     "You blinked. Wanna try with eyes open this time?",
     "That was cute. Wanna go for real now?",
     "One more? I promise I'll go easy, maybe",
-    "The game calls to you… will you answer?",
+    "The game calls to you... will you answer?",
     "The story isn't over yet. Continue?",
     "Destiny isn't done with you. Play again?"]
     return random.choice(rematch_prompts)

@@ -7,7 +7,7 @@ def slow_guess_roasts(guessNo) :
     f"{guessNo} guesses? Nah, you weren't playing the game... *I* was playing you.",
     "By guess number three, you were already lost. By number eight, you were mine.",
     "You trusted me? That's on you. I gaslit you so good, even *I* forgot the number.",
-    "You guessed it… eventually. But let's be real — I owned your thought process the whole time.",
+    "You guessed it... eventually. But let's be real- I owned your thought process the whole time.",
     "You finally got it? Congrats, but I just psychologically finessed the hell outta you.",
     f"More than {guessNo} guesses? I straight-up rewired your brain. That's talent.",
     "You were so off, I had to stop gaslighting just to let you *catch up*.",
