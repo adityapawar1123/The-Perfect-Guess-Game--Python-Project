@@ -39,7 +39,7 @@ pyttsx3 (text-to-speech)
 
 pydub (to edit some of the repetitive audio files)
 
-random, time, os, sys (core functionality)
+random, time, os, threading, sys (core functionality)
 
 🗂️ Project Structure
 📁 audio/ → Music + SFX
