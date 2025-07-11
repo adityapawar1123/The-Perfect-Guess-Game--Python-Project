@@ -49,6 +49,11 @@ random, time, os, threading, sys (core functionality)
 📁 game_icon/ → Window/taskbar icons
 📄 ThePerfectGuess.exe → Main executable (in release build)
 
+🛡️ IMPORTANT (For First-Time Launch):
+When you run the game for the first time, Windows might show a "Windows protected your PC" warning.
+Don’t worry — this is a common thing for indie games without a verified certificate.
+👉 Click **“More Info”** → **“Run Anyway”** to start the game.
+
 👨‍💻 Made By One Dev
 • Code: 100% original Python
 • Art: Pixel-by-pixel in Aseprite
