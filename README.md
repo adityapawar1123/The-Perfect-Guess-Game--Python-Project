@@ -92,7 +92,8 @@ v5.2 - Custom ranges, polish, final release
 
 🌐 Links
 • GitHub: https://github.com/adityapawar1123/The-Perfect-Guess-Game--Python-Project
-• Itch.io: (Coming soon)
+• Trailer: https://youtu.be/wmpNIwv5Z0A
+• Itch.io: https://drdev1123.itch.io/the-perfect-guess
 • Latest Release: (Check repo releases tab)
 
 🧪 Bug Reports / Contact
